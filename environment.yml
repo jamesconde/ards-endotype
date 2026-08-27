@@ -24,6 +24,7 @@ dependencies:
   - statsmodels=0.14.*
   - pyyaml=6.*
   - tqdm=4.*
+  - tabulate=0.9.*            # pandas.to_markdown, used by every generated report
 
   # data engineering
   - duckdb=1.0.*
