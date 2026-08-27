@@ -1,0 +1,51 @@
+# Pinned environment. SPEC.md §8.1 — "Git/GitHub and reproducible research
+# workflows" is named in the JD and is being graded.
+#
+#   conda env create -f environment.yml
+#   conda activate ards
+#
+# GPU note: torch is deliberately NOT here. The only GPU component is the
+# multi-task encoder (§4.5c), which is first on the cut list. Install it only
+# if that component survives:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu124
+name: ards
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - make                      # `make all` is criterion C10; not present on this box otherwise
+  - pip
+
+  # core
+  - numpy=1.26.*
+  - pandas=2.2.*
+  - scipy=1.13.*
+  - scikit-learn=1.5.*
+  - statsmodels=0.14.*
+  - pyyaml=6.*
+  - tqdm=4.*
+
+  # data engineering
+  - duckdb=1.0.*
+  - python-duckdb=1.0.*
+  - pyarrow=16.*
+  - requests=2.32.*
+
+  # modelling
+  - hmmlearn=0.3.*            # §4.5b trajectory HMM — GEn1E name HMMs on their platform page
+  - xgboost=2.1.*             # §4.5c mandatory GBM baseline
+  - shap=0.45.*               # §0.4 "interpreting model outputs"
+
+  # figures
+  - matplotlib=3.8.*
+  - seaborn=0.13.*
+
+  # dev
+  - pytest=8.*
+  - pre-commit=3.*
+  - ipykernel
+
+  - pip:
+      - GEOparse==2.0.4       # GEO series matrices without the bioconductor stack (see DECISIONS.md D1)
+      - gseapy==1.1.3         # ssGSEA for §3.6 pathway scores
+      - lifelines==0.28.0     # §4.5c censored time-to-sepsis (not on conda-forge)

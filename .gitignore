@@ -1,0 +1,47 @@
+# ---------------------------------------------------------------------------
+# Data never enters this repo. SPEC.md §0.2 item 2.
+# The licences would permit redistribution; that is not the reason.
+# ---------------------------------------------------------------------------
+data/
+scratch/
+*.duckdb
+*.duckdb.wal
+*.psv
+*.csv
+*.tsv
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.rds
+*.RData
+*.gz
+*.zip
+*.tar
+*.npz
+*.npy
+*.pt
+*.pkl
+*.joblib
+
+# Exceptions: committed aggregate outputs only (SPEC.md §8.4).
+# These are summary statistics, never row-level clinical data.
+!results/*.csv
+!results/*.json
+!config/*.yaml
+
+# Environment / tooling
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.venv/
+env/
+logs/*.log
+.Rhistory
+.RData
+.DS_Store
+
+# run artifacts
+results/checkpoints.jsonl
+results/L0_scoping.json

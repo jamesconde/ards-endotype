@@ -1,0 +1,72 @@
+# Pre-registered cohort parameters. SPEC.md §4.3, I4.
+#
+# FROZEN on day 0, before any data was read. Any edit after Layer 2 modelling
+# begins must be logged in DECISIONS.md with its trigger, or the freeze means
+# nothing. The one pre-authorised change is the S/F relaxation rule below,
+# which is written down here precisely so that taking it is not a judgement
+# call made after seeing a disappointing cohort size.
+
+cohort:
+  name: hypoxemic_respiratory_failure
+  # NOT ARDS. §6.3: no imaging, no PEEP, no ventilation flag on this path.
+  # This name propagates into every table, figure caption and variable name.
+  label_for_figures: "Hypoxemic respiratory failure (SpO2/FiO2 surrogate)"
+
+inclusion:
+  min_age: 18
+  min_iculos_hours: 24
+  sf_ratio_threshold: 235       # surrogate for P/F <= 200 (moderate-severe)
+  require_nonnull_fio2: true    # itself a weak proxy for oxygen support (§4.3)
+
+exclusion:
+  max_qualifying_hour: 168      # qualifying hour beyond ICU hour 168
+  o2sat_saturation_cutoff: 97   # S/F is uninformative once the oximeter saturates
+
+# Pre-authorised relaxation, §4.3. Taking this is not discretionary: if the
+# primary threshold yields < min_cohort_n, relax once, log it, and move on.
+# Do not relax a second time, and do not tune the threshold to a nicer number.
+relaxation:
+  min_cohort_n: 1500
+  relaxed_sf_threshold: 315     # surrogate for P/F <= 300 (mild-ARDS boundary)
+  max_relaxations: 1
+
+index_time:
+  definition: first_qualifying_hour
+  static_window_hours: 24       # T0 .. T0+24h
+  longitudinal_window_hours: 72 # T0 .. T0+72h
+  bin_hours: 6                  # -> 12 timesteps
+  aggregations: [min, max, mean, last]
+  emit_missingness_mask: true   # §4.4 — never forward-fill without a mask
+
+covariates_not_features:
+  # §4.1: clustering on these recovers unit assignment, not biology.
+  - Unit1
+  - Unit2
+  - hospital_system
+
+endpoints:
+  primary: sepsis_onset          # SepsisLabel, Sepsis-3, shifted 6h early (read Reyna 2020)
+  secondary: iculos_at_final_record   # weak, censored; never a headline (§4.4)
+  mortality_source: eicu_demo    # the ONLY mortality in Layer 2 (§4.4, §6.1)
+  # Explicitly forbidden: a composite "severity outcome" from organ-dysfunction
+  # variables presented as though it were mortality. §6.1, "what NOT to do".
+
+static_features:
+  demographics: [Age, Gender, HospAdmTime]
+  labs: [WBC, Platelets, Creatinine, Bilirubin_total, HCO3, Lactate, pH,
+         BaseExcess, BUN, Glucose, PTT, Fibrinogen]
+  derived: [sf_ratio, MAP]
+  # HCO3 carries the Sinha 2020 comparator and the §5 cross-layer link.
+
+clustering:
+  k_range: [2, 3, 4]
+  n_restarts: 100
+  selection_criterion: BIC
+  seed: 42
+
+splits:
+  discovery: setA
+  external: setB
+  # §4.7: a final holdout touched exactly once, at the end of the refinement loop.
+  refinement_holdout_frac: 0.20
+  seed: 42

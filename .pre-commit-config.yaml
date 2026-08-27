@@ -1,0 +1,22 @@
+# Integrity guards run before every commit. DECISIONS.md D6.
+#   pre-commit install
+repos:
+  - repo: local
+    hooks:
+      - id: repo-guard
+        name: data / vocabulary / discovery-claim guard
+        entry: python tools/repo_guard.py
+        language: system
+        pass_filenames: true
+        always_run: false
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=2000"]
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: detect-private-key
