@@ -143,6 +143,16 @@ PRIOR_ART.md §3 is the full list. These four are open access and are the ones t
 | 5 | PHIND 2026, *Lancet Respir Med* | CC BY 4.0 | current state of the art; the standardisation critique |
 | 6 | Informative missingness: PMC6329436; medRxiv 2024.06.09.24308661 | open | the justification for mask channels (§4.4) — cite it, don't invent it |
 
-The three VERIFY items in `shared/sinha2020.py` are open questions until paper 1 is read.
-They are the highest-value hour in the whole schedule: the module currently infers its
-units from an internal consistency argument, and a consistency argument is not a citation.
+The VERIFY items in `shared/sinha2020.py` are the highest-value hour in the whole schedule.
+Two are now settled and two are not:
+
+- **VERIFY-1 (logit vs probability): closed.** The equation as transcribed was a linear
+  predictor mislabelled as a probability; the logistic transform is correct.
+- **VERIFY-3 (0.5 cut-off): consistent with secondary descriptions.** Confirm.
+- **VERIFY-2 (units): open.** pg/mL is well supported but not yet cited from the paper.
+- **VERIFY-4 (which variant): open, and the one that matters most.** At least three
+  three-variable classifiers circulate — IL-6/sTNFR1/bicarbonate (what we implement),
+  IL-8/bicarbonate/protein C, and IL-8/bicarbonate/sTNFR1 (PHARLAP). **Read paper 1 to
+  determine which variables its three-variable model actually uses.** If it is not the
+  IL-6/sTNFR1 form, find the primary source for these coefficients before citing anything.
+  Until then the README must not name a paper for this equation (DECISIONS.md D7).

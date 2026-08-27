@@ -13,18 +13,20 @@ THREE THINGS TO VERIFY AGAINST THE PAPER ON DAY 1 (Tier 1 reading, PMC7543720).
 Each is flagged VERIFY in the code and repeated in results/L0_scoping.md.
 ---------------------------------------------------------------------------
 
-VERIFY-1  The printed line reads
+VERIFY-1  RESOLVED (2026-08-27). The source line was printed as
 
               P(hyperinflammatory) = -11.9593 + 1.0138*ln(IL6+1)
                                      - 0.2436*HCO3 + 1.1913*ln(sTNFR1+1)
 
           but that right-hand side is a logistic model's *linear predictor*,
           not a probability — it is unbounded and negative for plausible
-          inputs. This module applies the logistic function to it. Confirm
-          the paper states the same. If the paper prints a probability
-          directly, this module is wrong and must change.
+          inputs. The transcription dropped the transform. Secondary
+          descriptions confirm the model is applied by computing predicted
+          probabilities via logistic regression and assigning the
+          hyperinflammatory class at a 0.5 probability cut-off. This module
+          applies P = 1/(1+exp(-x)) accordingly.
 
-VERIFY-2  Units. The paper's units are not reproduced in PRIOR_ART.md.
+VERIFY-2  Units. Not stated in the source that supplied the equation.
           This module requires IL-6 and sTNFR1 in **pg/mL** and HCO3 in
           **mmol/L**, on the following evidence rather than on the paper:
 
@@ -40,8 +42,32 @@ VERIFY-2  Units. The paper's units are not reproduced in PRIOR_ART.md.
           plausible-looking prevalence. Confirm the units in the paper anyway —
           a consistency argument is not a citation.
 
-VERIFY-3  The classification cut-point. 0.5 is assumed here. The paper may use
-          a different threshold chosen for sensitivity/specificity balance.
+          Supporting, still secondary: the critical-care literature reports
+          IL-6 in pg/mL throughout (day-1 ICU median ~200 pg/mL, IQR 43-1576;
+          hyperinflammatory defined at >=100 pg/mL), which is consistent with
+          the pg/mL reading and inconsistent with ng/mL.
+
+VERIFY-3  The classification cut-point. 0.5 is used here and secondary
+          descriptions of the model's application report a 0.5 probability
+          cut-off. Confirm against the paper.
+
+VERIFY-4  **WHICH VARIANT IS THIS?** Several three-variable parsimonious
+          classifiers for these subphenotypes are in circulation, and they do
+          not use the same variables:
+
+            - IL-6 / sTNFR1 / bicarbonate   <- the equation implemented here
+            - IL-8 / bicarbonate / protein C
+            - IL-8 / bicarbonate / sTNFR1   (used in PHARLAP)
+
+          The Sinha 2020 Lancet Respir Med citation may attach to a different
+          variant than the coefficients above. Citing the wrong paper for the
+          model you actually ran is precisely the sloppiness this project
+          cannot afford, since its whole claim is careful reproduction.
+          `MODEL_VARIANT` below names the implemented variant explicitly so
+          the code cannot be ambiguous even while the citation is pending.
+
+          Until resolved, `CITATION` is marked PROVISIONAL and the README must
+          not name a specific paper for this equation.
 
 ---------------------------------------------------------------------------
 WHY THIS MODULE MATTERS TWICE
@@ -71,9 +97,23 @@ BETA_HCO3 = -0.2436         # HCO3 mmol/L, untransformed
 BETA_LN_STNFR1 = 1.1913     # ln(sTNFR1 pg/mL + 1)
 THRESHOLD = 0.5             # VERIFY-3
 
-CITATION = ("Sinha P, Delucchi KL, McAuley DF, et al. Development and validation of "
-            "parsimonious algorithms to classify ARDS phenotypes. "
-            "Lancet Respir Med. 2020;8(3):247-257. doi:10.1016/S2213-2600(19)30369-8")
+# Name the variant in code, so that an unresolved citation cannot become an
+# ambiguous implementation. See VERIFY-4.
+MODEL_VARIANT = "IL6_sTNFR1_HCO3"
+VARIANTS_IN_CIRCULATION = {
+    "IL6_sTNFR1_HCO3": "implemented here",
+    "IL8_HCO3_proteinC": "not implemented — reportedly the Lancet paper's 3-variable model",
+    "IL8_HCO3_sTNFR1": "not implemented — reportedly used in PHARLAP",
+}
+
+CITATION_IS_PROVISIONAL = True      # VERIFY-4
+CITATION = ("PROVISIONAL — the primary source for THESE coefficients is not yet confirmed. "
+            "Commonly attributed to: Sinha P, Delucchi KL, McAuley DF, et al. Development "
+            "and validation of parsimonious algorithms to classify ARDS phenotypes. "
+            "Lancet Respir Med. 2020;8(3):247-257. doi:10.1016/S2213-2600(19)30369-8 — but "
+            "that paper's three-variable model may use IL-8/bicarbonate/protein C rather "
+            "than the IL-6/sTNFR1/bicarbonate form implemented here. Do not print this "
+            "citation in the README until VERIFY-4 closes.")
 
 # Plausible physiological ranges, used to catch unit errors at call time.
 RANGES = {
@@ -222,6 +262,47 @@ def rank_surrogate(
     return (BETA_LN_IL6 * r[il6_col]
             + BETA_HCO3 * r[hco3_col]
             + BETA_LN_STNFR1 * r[stnfr1_col])
+
+
+# Reported hyperinflammatory prevalence clusters around 20-35% across published
+# cohorts. 0.30 is a stated assumption, not a measurement, and the concordance
+# result must be reported as sensitive to it.
+PUBLISHED_HYPER_PREVALENCE = 0.30
+
+
+def rank_surrogate_classes(
+    df: pd.DataFrame,
+    il6_col: str,
+    hco3_col: str,
+    stnfr1_col: str,
+    prevalence: float = PUBLISHED_HYPER_PREVALENCE,
+) -> pd.Series:
+    """Assign classes on a relative scale by splitting the rank score at `prevalence`.
+
+    The honest way to use a fixed-coefficient absolute-concentration model on a
+    relative scale (Olink NPX): keep the coefficients' directions and relative
+    weights, discard the intercept — which is the part that encodes the units —
+    and take the top `prevalence` fraction as hyperinflammatory.
+
+    What this supports: class concordance and rank agreement against the
+    unsupervised clusters (SPEC.md §3.7, §5).
+    What it does NOT support: any statement of the form "P(hyperinflammatory) =
+    x" for a patient, or a claim that the published classifier was applied.
+    Label it "an ordering derived from the published coefficients, split at the
+    published prevalence" — see DECISIONS.md D3.
+    """
+    if not 0.0 < prevalence < 1.0:
+        raise ValueError(f"prevalence must be in (0,1), got {prevalence}")
+    score = rank_surrogate(df, il6_col, hco3_col, stnfr1_col)
+    cut = score.quantile(1.0 - prevalence)
+    labels = pd.Series(np.where(score >= cut, "hyperinflammatory", "hypoinflammatory"),
+                       index=df.index, dtype=object)
+    labels[score.isna()] = "unclassifiable"
+    log.info("rank surrogate: %d hyper / %d hypo at assumed prevalence %.0f%% "
+             "(cut=%.4f). This is NOT the published classifier.",
+             int((labels == "hyperinflammatory").sum()),
+             int((labels == "hypoinflammatory").sum()), prevalence * 100, cut)
+    return labels
 
 
 def self_test() -> None:

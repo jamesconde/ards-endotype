@@ -43,8 +43,25 @@ by an internal consistency argument (archetypal hyper/hypo patients straddle P =
 sensibly; see VERIFY-2 in the module). `self_test()` locks the calibration so a unit error
 fails loudly instead of producing a plausible-looking prevalence.
 
-**Status: OPEN.** A consistency argument is not a citation. Three VERIFY items
-(logit-vs-probability, units, threshold) close when the paper is read on day 1.
+**Status: PARTLY RESOLVED (2026-08-27), after review.**
+
+- **VERIFY-1 (logit vs probability): resolved, and it was a transcription error in the
+  source document, not a misreading.** The printed right-hand side is a linear predictor;
+  the transform had been dropped by the secondary source it came from. Secondary
+  descriptions of the model in use confirm predicted probabilities via logistic regression
+  with a 0.5 cut-off. The module's `1/(1+exp(-x))` is correct.
+- **VERIFY-2 (units): still open, now better supported.** Critical-care literature reports
+  IL-6 in pg/mL throughout (day-1 ICU median ~200 pg/mL, IQR 43–1576; hyperinflammatory
+  defined at ≥100 pg/mL), consistent with the pg/mL reading. Still not a citation from the
+  source paper.
+- **VERIFY-3 (threshold): 0.5, consistent with secondary descriptions.** Confirm.
+- **VERIFY-4 (which variant): NEW, and the most consequential of the four.** See D7.
+
+**Why this is logged rather than quietly handled:** a wrong-unit reference classifier
+would silently miscalibrate every downstream comparison in both layers, and it would be
+invisible — the outputs would still look like probabilities. Concretely, one patient at
+IL-6 500 pg/mL and sTNFR1 10,000 pg/mL differs by roughly 14 log-odds units between the
+pg/mL and ng/mL readings. Every classification flips; the prevalence still looks plausible.
 
 **Why this is logged rather than quietly handled:** a wrong-unit reference classifier
 would silently miscalibrate every downstream comparison in both layers, and it would be
@@ -64,12 +81,63 @@ uses `rank_surrogate()` instead — the published coefficients' signs and relati
 applied to within-cohort ranks. The README must call this *"an ordering derived from the
 published coefficients"*, never *"the Sinha 2020 classification"*.
 
+**Confirmed on review (2026-08-27).** The spec's §3.7 plan is a category error, and the
+reason the first version of the guard missed it is the part worth keeping: NPX values sit
+around 0–15, and `ln(pg/mL)` for real concentrations sits around 5–10, so a range check
+cannot separate them. The fix is domain-grounded rather than statistical — circulating
+sTNFR1 is in the thousands of pg/mL in every human, so `max(sTNFR1) < 100` is a reliable
+detector of a relative scale. A test caught this, not inspection.
+
+**Resolution adopted:** `rank_surrogate_classes()` scores by rank, discards the intercept
+(the part that encodes the units), and splits at the published hyperinflammatory prevalence
+(assumed 0.30) to assign classes. Concordance against the unsupervised clusters is then
+reportable. The assumed prevalence is a stated assumption, not a measurement, and the
+concordance result must be reported as sensitive to it.
+
+**Rejected alternative:** fitting our own logistic model on NPX with the same three
+variables. Legitimate, but it is then *our* model, not a published external reference, and
+the entire design depends on the reference being external. If it is ever done, it must be
+labelled as ours.
+
 **Consequence for §5:** the cross-layer bridge is weaker than the spec assumes. It rests
 on concordance of *structure* and *ordering*, not on the same classifier producing
 comparable probabilities in both layers. State it as weaker.
 
 **What would reverse it:** a published NPX → pg/mL conversion for these specific assays.
 If one exists, use it and cite it. Do not invent one.
+
+---
+
+## D7 — Which three-variable classifier is this? (day 0, OPEN)
+
+**Trigger:** at least three parsimonious three-variable classifiers for these subphenotypes
+circulate, and they do not share variables:
+
+| Variant | Status here |
+|---|---|
+| IL-6 / sTNFR1 / bicarbonate | the coefficients we were given, and what is implemented |
+| IL-8 / bicarbonate / protein C | reportedly the Sinha 2020 *Lancet Respir Med* three-variable model |
+| IL-8 / bicarbonate / sTNFR1 | reportedly used in PHARLAP |
+
+**The risk:** citing Sinha 2020 *Lancet Respir Med* for coefficients that came from a
+different paper. For a project whose entire claim is careful reproduction of published
+work, attaching the wrong citation to the reference model is worse than any analysis error
+— it is the exact failure the reader is checking for.
+
+**Decision:** name the variant in code (`MODEL_VARIANT = "IL6_sTNFR1_HCO3"`), mark
+`CITATION_IS_PROVISIONAL = True`, and **do not print any specific citation for this
+equation in the README until the primary source is confirmed.** A test asserts the
+provisional marker is present. The implementation is unambiguous even while the
+attribution is not.
+
+**Closes when:** the primary source for these specific coefficients is read.
+
+**Also worth carrying into the writeup:** the IL-6/sTNFR1/bicarbonate model is reportedly
+in live prospective trial use, and a 2026 ATS abstract reports an improved parsimonious
+model (derived on EARLI+FACTT, validated on ROSE and CLOVERS) noting it may not fully
+capture the biology LCA defines. Live prospective use strengthens this project's
+relevance; the stated critique is a ready-made limitations paragraph. Verify both before
+citing.
 
 ---
 

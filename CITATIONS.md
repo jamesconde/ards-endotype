@@ -46,6 +46,14 @@ Challenge 2019 is CC BY 4.0.
 ## Reference models reproduced, not invented
 
 **The 3-variable parsimonious classifier** implemented in `shared/sinha2020.py`:
+
+> ⚠️ **PROVISIONAL — do not reproduce this attribution elsewhere until it is confirmed.**
+> The implemented equation uses **IL-6, sTNFR1 and bicarbonate**. At least two other
+> three-variable classifiers circulate in this literature (IL-8/bicarbonate/protein C, and
+> IL-8/bicarbonate/sTNFR1 as used in PHARLAP), and the paper below may publish a different
+> variant than the coefficients in hand. The primary source for *these* coefficients is
+> being verified. See DECISIONS.md D7.
+
 > Sinha P, Delucchi KL, McAuley DF, et al. Development and validation of parsimonious
 > algorithms to classify ARDS phenotypes. *Lancet Respir Med.* 2020;8(3):247–257.
 > doi:10.1016/S2213-2600(19)30369-8

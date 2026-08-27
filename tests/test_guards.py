@@ -135,12 +135,54 @@ def test_sinha_is_itself_batch_invariant():
     assert_batch_invariant(predict, X, label="sinha2020")
 
 
-def test_rank_surrogate_is_not_sold_as_the_classifier():
-    """NPX must not reach classify(); the surrogate exists so it cannot (D3)."""
-    df = pd.DataFrame({"IL6": [1.2, 4.5, 3.0], "HCO3": [22, 18, 25],
-                       "TNFRSF1A": [2.1, 5.5, 3.3]})
-    s = sinha2020.rank_surrogate(df, "IL6", "HCO3", "TNFRSF1A")
-    assert len(s) == 3 and s.notna().all()
-    # NPX values are far below the pg/mL plausible range and must be refused.
+def _fake_npx(n: int = 200, seed: int = 3) -> pd.DataFrame:
+    """NPX-like values: relative, log2, roughly 0-15. Not concentrations."""
+    rng = np.random.default_rng(seed)
+    hyper = rng.random(n) < 0.30
+    return pd.DataFrame({
+        "IL6": rng.normal(np.where(hyper, 8.0, 3.5), 1.0),
+        "HCO3": rng.normal(np.where(hyper, 19.0, 25.0), 2.5),
+        "TNFRSF1A": rng.normal(np.where(hyper, 6.5, 3.0), 1.0),
+        "truth": np.where(hyper, "hyperinflammatory", "hypoinflammatory"),
+    })
+
+
+def test_npx_cannot_reach_the_published_equation():
+    """The silent failure D3 exists to prevent: NPX sits inside the pg/mL range."""
+    df = _fake_npx()
     with pytest.raises(ValueError, match="unit error"):
         sinha2020.classify(df.IL6, df.HCO3, df.TNFRSF1A)
+
+
+def test_rank_surrogate_recovers_structure_without_claiming_probabilities():
+    df = _fake_npx()
+    labels = sinha2020.rank_surrogate_classes(df, "IL6", "HCO3", "TNFRSF1A")
+    # Split at the assumed prevalence, so the class sizes are set by construction.
+    assert abs((labels == "hyperinflammatory").mean() - 0.30) < 0.02
+    # It should still track the underlying structure well above chance.
+    agree = (labels == df.truth).mean()
+    assert agree > 0.75, f"rank surrogate recovered only {agree:.2%} agreement"
+
+
+def test_rank_surrogate_is_deliberately_not_portable():
+    """It uses within-cohort ranks, so it must fail the portability check.
+
+    Stated as a test so nobody later mistakes it for a deployable classifier.
+    """
+    df = _fake_npx()
+
+    def predict(Z):
+        d = pd.DataFrame(Z, columns=["IL6", "HCO3", "TNFRSF1A"])
+        return sinha2020.rank_surrogate(d, "IL6", "HCO3", "TNFRSF1A").to_numpy()
+
+    X = df[["IL6", "HCO3", "TNFRSF1A"]].to_numpy()
+    with pytest.raises(PortabilityError, match="depend on the batch"):
+        assert_batch_invariant(predict, X, label="rank_surrogate")
+
+
+def test_model_variant_is_named_explicitly():
+    """VERIFY-4: several 3-variable classifiers circulate; the code must not be vague."""
+    assert sinha2020.MODEL_VARIANT == "IL6_sTNFR1_HCO3"
+    assert sinha2020.MODEL_VARIANT in sinha2020.VARIANTS_IN_CIRCULATION
+    if sinha2020.CITATION_IS_PROVISIONAL:
+        assert "PROVISIONAL" in sinha2020.CITATION
