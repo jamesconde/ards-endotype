@@ -181,8 +181,56 @@ def test_rank_surrogate_is_deliberately_not_portable():
 
 
 def test_model_variant_is_named_explicitly():
-    """VERIFY-4: several 3-variable classifiers circulate; the code must not be vague."""
+    """VERIFY-4: several parsimonious models circulate; the code must not be vague."""
     assert sinha2020.MODEL_VARIANT == "IL6_sTNFR1_HCO3"
     assert sinha2020.MODEL_VARIANT in sinha2020.VARIANTS_IN_CIRCULATION
     if sinha2020.CITATION_IS_PROVISIONAL:
         assert "PROVISIONAL" in sinha2020.CITATION
+    else:
+        # Resolved: it is an *ancillary* model from the appendix, not the
+        # paper's headline 3-variable model. The citation must say so, or the
+        # README will eventually claim the wrong thing.
+        assert "ancillary" in sinha2020.CITATION.lower()
+        assert "Table S4" in sinha2020.CITATION
+
+
+def test_stnfr1_coefficient_is_the_primary_source_value():
+    """1.1903 from two Sinha-authored appendices, not the 1.1913 in circulation.
+
+    Pinned as a test because the difference is ~0.009 log-odds and would never
+    be visible in any output — exactly why it needs a guard rather than a review.
+    """
+    assert sinha2020.BETA_LN_STNFR1 == 1.1903
+
+
+def test_both_published_cutpoints_are_available_and_ordered():
+    assert sinha2020.YOUDEN_THRESHOLD == 0.274
+    assert sinha2020.THRESHOLD == 0.5
+    assert sinha2020.YOUDEN_THRESHOLD < sinha2020.THRESHOLD
+
+
+def test_published_class_medians_land_on_the_right_side_of_both_cutpoints():
+    """The strongest available units check: the paper's own reference distributions."""
+    lo = sinha2020.REFERENCE_MEDIANS["hypoinflammatory"]
+    hi = sinha2020.REFERENCE_MEDIANS["hyperinflammatory"]
+    p_lo = sinha2020.classify([lo["il6_pg_ml"]], [lo["hco3_mmol_l"]],
+                              [lo["stnfr1_pg_ml"]]).probability[0]
+    p_hi = sinha2020.classify([hi["il6_pg_ml"]], [hi["hco3_mmol_l"]],
+                              [hi["stnfr1_pg_ml"]]).probability[0]
+    assert p_lo < sinha2020.YOUDEN_THRESHOLD
+    assert p_hi > sinha2020.THRESHOLD
+
+
+def test_il8_variant_agrees_with_il6_variant_on_clear_cases():
+    """Two ancillary models from the same table should not disagree on archetypes."""
+    hyper_il6 = sinha2020.classify([933.0], [20.0], [7452.0])
+    hyper_il8 = sinha2020.classify_il8([200.0], [20.0], [7452.0])
+    hypo_il8 = sinha2020.classify_il8([10.0], [26.0], [2000.0])
+    assert hyper_il6.label[0] == hyper_il8.label[0] == "hyperinflammatory"
+    assert hypo_il8.label[0] == "hypoinflammatory"
+
+
+def test_il8_variant_also_refuses_npx():
+    df = _fake_npx()
+    with pytest.raises(ValueError, match="unit error"):
+        sinha2020.classify_il8(df.IL6, df.HCO3, df.TNFRSF1A)

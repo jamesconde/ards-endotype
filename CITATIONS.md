@@ -45,18 +45,26 @@ Challenge 2019 is CC BY 4.0.
 
 ## Reference models reproduced, not invented
 
-**The 3-variable parsimonious classifier** implemented in `shared/sinha2020.py`:
-
-> ⚠️ **PROVISIONAL — do not reproduce this attribution elsewhere until it is confirmed.**
-> The implemented equation uses **IL-6, sTNFR1 and bicarbonate**. At least two other
-> three-variable classifiers circulate in this literature (IL-8/bicarbonate/protein C, and
-> IL-8/bicarbonate/sTNFR1 as used in PHARLAP), and the paper below may publish a different
-> variant than the coefficients in hand. The primary source for *these* coefficients is
-> being verified. See DECISIONS.md D7.
+**The ancillary parsimonious models** implemented in `shared/sinha2020.py`:
 
 > Sinha P, Delucchi KL, McAuley DF, et al. Development and validation of parsimonious
 > algorithms to classify ARDS phenotypes. *Lancet Respir Med.* 2020;8(3):247–257.
-> doi:10.1016/S2213-2600(19)30369-8
+> doi:10.1016/S2213-2600(19)30369-8 — **supplementary appendix, Table S4.**
+
+⚠️ **Precision that matters.** The models implemented here (IL-6/sTNFR1/bicarbonate, and
+IL-8/sTNFR1/bicarbonate) are **ancillary** models from appendix Table S4. They are *not*
+the paper's headline three- and four-variable models, which use **IL-8, bicarbonate and
+protein C** (plus vasopressor use for the four-variable form). Do not describe this code as
+"the Sinha three-variable classifier." See DECISIONS.md D7.
+
+Coefficients corroborated independently in the appendix of:
+> Sinha P, Calfee CS, Cherian S, et al. Prevalence of phenotypes of acute respiratory
+> distress syndrome in critically ill patients with COVID-19: a prospective observational
+> study. *Lancet Respir Med.* 2020;8(12):1209–1218.
+
+*(Note: the sTNFR1 coefficient is 1.1903 in both primary appendices. A value of 1.1913
+circulates in secondary sources and has reached at least one published paper. See
+DECISIONS.md D8.)*
 
 **The biomarker-free classifier** this project's own classifiers are benchmarked against:
 > Sinha P, Churpek MM, Calfee CS. Machine Learning Classifier Models Can Identify ARDS

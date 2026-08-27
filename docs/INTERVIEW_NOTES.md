@@ -43,23 +43,32 @@ classification flips. The prevalence still looks plausible.
 
 ## "Tell me about a time you were wrong" / "how do you handle uncertainty in a source?"
 
-Three separate problems in the reference model, found before any analysis ran:
+**Four separate defects in the reference model, all found before any analysis ran, and all
+invisible in output.** The equation came to me second-hand, as it does in most real work.
 
-1. The equation as transcribed was labelled a probability but was a logistic model's linear
-   predictor — the transform had been dropped by a secondary source. Caught by noticing the
-   right-hand side is unbounded and negative for every plausible patient.
-2. The units were not stated anywhere in the source. Rather than pick one, the
-   implementation locks a calibration test to archetypal hyper/hypo patients so a unit
-   error fails loudly instead of silently reclassifying everyone.
-3. **At least three different "three-variable" classifiers circulate in this literature**
-   — IL-6/sTNFR1/bicarbonate, IL-8/bicarbonate/protein C, IL-8/bicarbonate/sTNFR1 — so the
-   commonly-attached citation may point at a different model than the coefficients in hand.
-   The variant is named explicitly in code and the citation is marked provisional until the
-   primary source is read.
+1. **It was labelled a probability but was a linear predictor.** Caught by noticing the
+   right-hand side is unbounded and negative for every plausible patient. The logistic
+   transform had been dropped in transcription. Several *published* downstream papers print
+   it the same wrong way.
+2. **The units were not stated.** Rather than pick one, I locked a calibration test so a
+   unit error fails loudly. Later confirmed pg/mL from the appendix — and the test now
+   anchors on the paper's own class-conditional medians (IL-6 116 vs 933 pg/mL; sTNFR1
+   3,225 vs 7,452), which must land on the correct side of both published cut-points.
+   They do: P = 0.034 and 0.672.
+3. **It is not the model everyone thinks it is.** The paper's headline three-variable model
+   uses IL-8, bicarbonate and protein C. The IL-6/sTNFR1/bicarbonate form is an *ancillary*
+   model from supplementary Table S4. Calling it "the Sinha three-variable classifier" —
+   which is how it is usually described — is a checkable error in front of readers who know
+   this literature.
+4. **One coefficient was wrong.** The circulating sTNFR1 coefficient is 1.1913; both
+   primary appendices give 1.1903. The difference is ~0.009 log-odds, far too small to flip
+   any classification, and therefore permanently invisible. It has propagated into at least
+   one published paper. It is now pinned by a test.
 
-**The point:** the reference standard is the one thing in a reproduction study that cannot
-be allowed to be approximately right, because everything downstream is measured against it.
-Each of these would have been invisible in the output.
+**The point:** in a reproduction study the reference standard is the one thing that cannot
+be allowed to be approximately right, because every downstream number is measured against
+it. None of these four would have produced a wrong-looking result. Three cut-points also
+circulate for nearby models — 0.295, 0.301, 0.276 — none of which belong to this one.
 
 ---
 

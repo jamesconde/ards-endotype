@@ -143,16 +143,16 @@ PRIOR_ART.md §3 is the full list. These four are open access and are the ones t
 | 5 | PHIND 2026, *Lancet Respir Med* | CC BY 4.0 | current state of the art; the standardisation critique |
 | 6 | Informative missingness: PMC6329436; medRxiv 2024.06.09.24308661 | open | the justification for mask channels (§4.4) — cite it, don't invent it |
 
-The VERIFY items in `shared/sinha2020.py` are the highest-value hour in the whole schedule.
-Two are now settled and two are not:
+**All four VERIFY items in `shared/sinha2020.py` were closed on day 0** against the paper's
+supplementary appendix, so paper 1 no longer gates Layer 2 code. What was found:
 
-- **VERIFY-1 (logit vs probability): closed.** The equation as transcribed was a linear
-  predictor mislabelled as a probability; the logistic transform is correct.
-- **VERIFY-3 (0.5 cut-off): consistent with secondary descriptions.** Confirm.
-- **VERIFY-2 (units): open.** pg/mL is well supported but not yet cited from the paper.
-- **VERIFY-4 (which variant): open, and the one that matters most.** At least three
-  three-variable classifiers circulate — IL-6/sTNFR1/bicarbonate (what we implement),
-  IL-8/bicarbonate/protein C, and IL-8/bicarbonate/sTNFR1 (PHARLAP). **Read paper 1 to
-  determine which variables its three-variable model actually uses.** If it is not the
-  IL-6/sTNFR1 form, find the primary source for these coefficients before citing anything.
-  Until then the README must not name a paper for this equation (DECISIONS.md D7).
+- Units are pg/mL for both cytokines, mmol/L for bicarbonate (Table S2).
+- The equation is a linear predictor; the logistic transform is required.
+- Two published cut-points, 0.274 (Youden) and 0.5, both now exposed.
+- The coefficients come from appendix **Table S4** and are an **ancillary** model, not the
+  paper's headline 3-variable model (which uses IL-8 and protein C). Wording matters here.
+- The sTNFR1 coefficient in circulation (1.1913) is a typo for **1.1903**.
+
+Still worth reading paper 1 properly for the LCA variable set and the derivation design —
+just not as a blocker. Paper 4 (Reyna) remains a genuine gate: `SepsisLabel` is the primary
+endpoint and its 6-hour shift changes how it can be used.

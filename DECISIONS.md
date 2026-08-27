@@ -43,19 +43,24 @@ by an internal consistency argument (archetypal hyper/hypo patients straddle P =
 sensibly; see VERIFY-2 in the module). `self_test()` locks the calibration so a unit error
 fails loudly instead of producing a plausible-looking prevalence.
 
-**Status: PARTLY RESOLVED (2026-08-27), after review.**
+**Status: CLOSED (2026-08-27)**, verified against the paper's supplementary appendix.
 
-- **VERIFY-1 (logit vs probability): resolved, and it was a transcription error in the
-  source document, not a misreading.** The printed right-hand side is a linear predictor;
-  the transform had been dropped by the secondary source it came from. Secondary
-  descriptions of the model in use confirm predicted probabilities via logistic regression
-  with a 0.5 cut-off. The module's `1/(1+exp(-x))` is correct.
-- **VERIFY-2 (units): still open, now better supported.** Critical-care literature reports
-  IL-6 in pg/mL throughout (day-1 ICU median ~200 pg/mL, IQR 43–1576; hyperinflammatory
-  defined at ≥100 pg/mL), consistent with the pg/mL reading. Still not a citation from the
-  source paper.
-- **VERIFY-3 (threshold): 0.5, consistent with secondary descriptions.** Confirm.
-- **VERIFY-4 (which variant): NEW, and the most consequential of the four.** See D7.
+- **VERIFY-1 (logit vs probability): confirmed a transcription error in the source
+  document, not a misreading.** Table S4 is a table of logistic-regression coefficients;
+  the right-hand side is log-odds. Several *published* downstream papers print it as
+  "Probability (hyperinflammatory) = …", and that labelling is wrong. `1/(1+exp(-x))` stands.
+- **VERIFY-2 (units): CONFIRMED pg/mL for both cytokines, mmol/L for bicarbonate**, from
+  appendix Table S2 row labels. The day-0 inference from internal consistency was correct.
+  `self_test()` now anchors on the paper's own class-conditional medians (IL-6 116 vs 933
+  pg/mL; sTNFR1 3,225 vs 7,452 pg/mL) rather than invented archetypes, which is a
+  materially stronger check: the published medians must land on the correct side of both
+  published cut-points, and they do (P = 0.034 and 0.672).
+- **VERIFY-3 (threshold): two published cut-points**, both now exposed — 0.274 (Youden,
+  sens 0.93 / spec 0.74) and 0.5 (sens 0.82 / spec 0.89). Two nearby values belong to
+  *different* models and must not be used: 0.295/0.301 (the IL-8/protein C models) and
+  0.276 (the IL-6/sTNFR1/vasopressor model used in HARP-2).
+- **VERIFY-4: resolved.** See D7.
+- **NEW — the coefficient we were given was wrong.** See D8.
 
 **Why this is logged rather than quietly handled:** a wrong-unit reference classifier
 would silently miscalibrate every downstream comparison in both layers, and it would be
@@ -108,7 +113,61 @@ If one exists, use it and cite it. Do not invent one.
 
 ---
 
-## D7 — Which three-variable classifier is this? (day 0, OPEN)
+## D7 — Which three-variable classifier is this? (day 0, RESOLVED same day)
+
+**Resolution:** the attribution is correct, but **the location is the supplementary
+appendix, Table S4 — not the main text**, and the model is an **ancillary** one rather
+than the paper's headline three-variable model.
+
+- The paper's headline models are **IL-8 / bicarbonate / protein C** (3-variable) and the
+  same plus vasopressor use (4-variable). Figure 2's legend states this verbatim.
+- Table S4 ("Model composition with variable coefficients of ancillary parsimonious
+  models") contains a family of models permuting the six top variables. Our
+  IL-6/sTNFR1/bicarbonate coefficients are one row of it, AUC 0.94 (0.92–0.95).
+- Independently corroborated in the appendix of Sinha, Calfee, Cherian et al., *Lancet
+  Respir Med* 2020;8(12):1209–1218 (COVID ARDS), which prints the same coefficients and
+  describes the classifier as "comprised of the IL-6, sodium bicarbonate and sTNFR-1".
+
+**Consequence for wording, and it is not cosmetic:** never write "the Sinha three-variable
+classifier" about this code. Write "an ancillary parsimonious model from Sinha et al. 2020
+(appendix Table S4)". A reader of this literature will know the headline 3-variable model
+uses IL-8 and protein C, and calling ours by that name is a checkable error.
+
+**Also implemented as a result:** the Table S4 ancillary model pairing sTNFR1 and
+bicarbonate with **IL-8** (intercept −10.6110, IL-8 1.2902, HCO3 −0.2326, sTNFR1 1.0732,
+AUC 0.95) is now available as `classify_il8()`. It has better specificity, and Olink
+Explore carries CXCL8, so Layer 1 can use it. Layer 2 has neither cytokine.
+
+**Carry into the writeup (verify before citing):** ATS 2026 abstract C24-04, Tripathi et
+al., *AJRCCM* 2026;212(Suppl 1) — an improved parsimonious model derived on EARLI+FACTT
+(n=1,604) and validated on ROSE (n=1,006) and CLOVERS (n=1,563). The augmented model is
+IL-8 / angiopoietin-2 / sTNFR-1 / bicarbonate, AUROC 0.97 and 0.95. Its stated critique of
+the model we implement, verbatim: *"This PCM may not fully capture the biology defined by
+LCA, given the importance of IL-8 and endothelial markers in capturing the
+Hyperinflammatory pathophysiology."* That the IL-6 model is in live prospective trial use
+strengthens this project's relevance; the critique is a ready-made limitations paragraph.
+
+---
+
+## D8 — The sTNFR1 coefficient we were handed was wrong (day 0)
+
+**Trigger:** the equation supplied in `PRIOR_ART.md` gives the sTNFR1 coefficient as
+**1.1913**. Both primary Sinha-authored appendices give **1.1903**.
+
+**Decision:** use 1.1903, pinned by a test.
+
+**Why this is logged rather than silently corrected.** The difference is about 0.009
+log-odds at a typical sTNFR1 value — far too small to change any classification, and
+therefore permanently invisible in any output. It is exactly the class of error that
+survives review indefinitely because nothing ever looks wrong. The typo has propagated into
+at least one published paper (BMC Pulm Med 2025).
+
+**Caveat on the evidence:** the two confirming sources share an author, so they are primary
+but not fully independent. No third-party re-derivation was found.
+
+---
+
+## D7-ORIGINAL — the open question as first recorded (superseded above)
 
 **Trigger:** at least three parsimonious three-variable classifiers for these subphenotypes
 circulate, and they do not share variables:
