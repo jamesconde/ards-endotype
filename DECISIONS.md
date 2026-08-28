@@ -285,7 +285,15 @@ familiarity and smoke tests only. If MIMIC-IV appears anywhere outside §10, tha
 
 ---
 
-## D5 — `config/genesets.yaml` deliberately not written on day 0
+## D5 — `config/genesets.yaml` deliberately not written on day 0 (CLOSED day 1)
+
+**Closed 2026-08-27.** Written and committed in its own commit after scoping completed and
+before any expression data was loaded or any clustering run. 17 genes in the p38/MK2 set,
+3 mandatory comparators including an interferon negative control, 10 Olink assays for the
+protein arm, and four pre-committed interpretation rules so the conclusion cannot be chosen
+after seeing the numbers. The commit ordering is what makes the freeze auditable.
+
+### Original entry
 
 SPEC.md §3.6 requires the pathway gene sets frozen before §3.4 runs, and the day-1 line in
 §7 says they are written *after* scoping and *before* any modelling. Writing them on day 0
