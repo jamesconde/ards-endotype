@@ -45,3 +45,7 @@ logs/*.log
 # run artifacts
 results/checkpoints.jsonl
 results/L0_scoping.json
+
+# agent working directories (never committed)
+scratch_proteomics/
+scratch_*/

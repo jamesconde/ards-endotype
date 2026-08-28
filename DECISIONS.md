@@ -149,6 +149,30 @@ strengthens this project's relevance; the critique is a ready-made limitations p
 
 ---
 
+## D10 — FiO2 needs a physiological validity window (day 1)
+
+**Trigger:** scoping set A found `FiO2` ranging from 0.000 to 10.000 on a fraction scale
+where room air is 0.209 and pure oxygen is 1.0. 321 of 112,155 recorded values (0.29%) are
+impossible: 81 exact zeros, ~238 below room air, and 2 above 1.0.
+
+**Decision:** pre-registered validity window `[0.21, 1.0]` in `config/cohort_params.yaml`.
+Hours with an out-of-range FiO2 are rejected as S/F candidates; **the patient is not
+excluded**, only the impossible hour.
+
+**Why it matters more than 0.29% suggests — the errors are not symmetric.** A zero sends
+S/F to infinity. A value below room air inflates S/F and would falsely *exclude*. A value
+above 1.0 *deflates* S/F and would falsely *admit* a patient as severely hypoxemic, adding
+false positives to the cohort. Only two such values exist in set A, so the practical effect
+here is negligible — the cohort count is 4,682 either way — but the asymmetry is the reason
+to filter explicitly rather than rely on the count being small.
+
+**Note against SPEC.md §6.2**, which argued this dataset avoids the MIMIC problem of "P/F
+ratios of 0.4 and 3,000 in the same table." The same class of error exists here, at roughly
+0.3% rather than MIMIC's rate. Much smaller, but not zero, and the spec's claim should be
+softened rather than repeated.
+
+---
+
 ## D9 — The MGH clinical file has no bicarbonate, which breaks the §5 bridge (day 0)
 
 **Trigger:** the MGH cohort's clinical data dictionary (Life Science Alliance 2023

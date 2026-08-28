@@ -106,12 +106,25 @@ def find_psv_files(root: Path) -> dict[str, list[Path]]:
     return by_set
 
 
-def scope_challenge(sample_n: int | None = None) -> dict:
+def scope_challenge(sample_n: int | None = None,
+                    sets: tuple[str, ...] | None = None) -> dict:
+    """Scope the Challenge 2019 corpus.
+
+    `sets` restricts to named hospital systems. Use it when a set is still
+    downloading: a partial set would silently bias the A/B coverage comparison,
+    and that comparison decides whether §4.5d measures transfer or missingness.
+    """
     root = paths.CHALLENGE
     if not root.exists():
         return {"present": False}
 
     by_set = find_psv_files(root)
+    if sets:
+        dropped = {k: len(v) for k, v in by_set.items() if k not in sets and v}
+        by_set = {k: v for k, v in by_set.items() if k in sets}
+        if dropped:
+            log.warning("restricted to sets %s; EXCLUDED %s. The A/B comparison "
+                        "is not computed in this run.", sets, dropped)
     counts = {k: len(v) for k, v in by_set.items()}
     total = sum(counts.values())
     log.info("Challenge 2019 layout: %s (total %d)", counts, total)
@@ -120,8 +133,10 @@ def scope_challenge(sample_n: int | None = None) -> dict:
     if total == 0:
         return {"present": True, "error": "no .psv files found — extract the zips (DOWNLOADS.md)"}
 
-    if total != 40336:
+    if sets is None and total != 40336:
         log.warning("expected 40,336 patient files, found %d — check the extraction", total)
+    elif sets:
+        log.info("scoping %d patients from set(s) %s", total, ",".join(sets))
 
     files = [(f, s) for s, fl in by_set.items() for f in fl]
     if sample_n and sample_n < len(files):
@@ -522,6 +537,9 @@ def main() -> int:
                     help="scope a single source")
     ap.add_argument("--sample", type=int, default=None,
                     help="scope only N Challenge patients (development only)")
+    ap.add_argument("--sets", default=None,
+                    help="restrict Challenge scoping to hospital systems, e.g. --sets A "
+                         "(use while a set is still downloading)")
     args = ap.parse_args()
 
     presence = check_sources()
@@ -535,7 +553,9 @@ def main() -> int:
     findings: dict = {}
     want = {args.only} if args.only else {"challenge", "geo", "olink", "eicu"}
     if "challenge" in want:
-        findings["challenge"] = scope_challenge(sample_n=args.sample)
+        findings["challenge"] = scope_challenge(
+            sample_n=args.sample,
+            sets=tuple(args.sets.split(",")) if args.sets else None)
     if "geo" in want:
         findings["geo"] = scope_geo()
     if "olink" in want:

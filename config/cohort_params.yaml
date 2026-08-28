@@ -18,6 +18,17 @@ inclusion:
   sf_ratio_threshold: 235       # surrogate for P/F <= 200 (moderate-severe)
   require_nonnull_fio2: true    # itself a weak proxy for oxygen support (§4.3)
 
+# Physiological validity window for FiO2, added day 1 after observing the data
+# (DECISIONS.md D10). Room air is 0.209 and pure oxygen is 1.0; anything outside
+# is a recording error. 0.29% of set A's FiO2 values fall outside it, including
+# 81 zeros (S/F -> infinity) and 2 values above 1.0 (which deflate S/F and would
+# falsely admit a patient as severely hypoxemic). Hours outside the window are
+# dropped as S/F candidates; the patient is not excluded.
+fio2_validity:
+  min: 0.21
+  max: 1.0
+  note: "values of exactly 0.20 are treated as out-of-range rounding of room air"
+
 exclusion:
   max_qualifying_hour: 168      # qualifying hour beyond ICU hour 168
   o2sat_saturation_cutoff: 97   # S/F is uninformative once the oximeter saturates
