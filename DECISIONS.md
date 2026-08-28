@@ -149,6 +149,58 @@ strengthens this project's relevance; the critique is a ready-made limitations p
 
 ---
 
+## D9 — The MGH clinical file has no bicarbonate, which breaks the §5 bridge (day 0)
+
+**Trigger:** the MGH cohort's clinical data dictionary (Life Science Alliance 2023
+supplementary material 2, 40 variables) was obtained and read in full.
+
+**What is there, and it is genuinely useful:**
+
+- **WHO ordinal severity at days 0, 3, 7 and 28, plus WHO max.** A real longitudinal
+  outcome for the trajectory work (C3), scoreable with a proportional-odds model.
+- **A mortality outcome.** WHO score 1 is defined as "death within 28 days". Layer 1
+  therefore has the outcome Layer 2 lacks (§6.1) — worth stating in the README, since it
+  partially offsets the open-data cost.
+- **A COVID 0/1 flag**, which makes the aetiology-versus-host-response comparison in §6.7
+  buildable: do the endotype clusters mix COVID-positive and COVID-negative patients, or
+  separate them? Mixing is evidence the endotype reflects host response, which is the
+  premise a host-directed p38 modulator depends on.
+- Comorbidity flags and presenting symptoms for case mix.
+
+**What is NOT there, and it matters: bicarbonate.** SPEC.md §3.7 assumed "the third
+[Calfee/Sinha variable] is in the clinical file if present; otherwise substitute an
+available acidosis marker." It is not present, and **there is no acidosis marker to
+substitute** — no bicarbonate, no lactate, no pH, no base excess. The labs are
+neutrophils, lymphocytes, monocytes, creatinine, CRP, D-dimer, LDH, and a troponin flag.
+
+**Consequence, and it is not small.** SPEC.md §5 states that the shared bicarbonate
+variable "is what makes this more than an analogy." That variable does not exist on the
+Layer 1 side. Combined with D3 (Olink NPX is not pg/mL, so the published equation cannot be
+evaluated at all), the Layer 1 arm of the cross-layer comparator is blocked twice over:
+
+1. the two proteins are on a relative scale the fixed coefficients cannot consume, and
+2. the third variable is absent entirely.
+
+**Decision:** the §5 bridge reduces to concordance of *structure* — both layers
+independently recovering a two-class split with a consistent inflammatory direction. That
+is a real but weaker claim, it must be written as weaker, and the paragraph in §5 asserting
+the bicarbonate link has to go.
+
+**Rejected:** dropping the bicarbonate term and running the remaining two coefficients.
+Removing a term from a fixed-coefficient logistic model does not yield "the model minus one
+variable" — the intercept was fitted in its presence, so the result is a different model
+with no published provenance. If a two-protein ordering is used, it is ours and is labelled
+ours.
+
+**Second-order limitation:** every lab in the file is binned into five ordinal categories
+rather than reported continuously, which caps the resolution of anything built on them.
+
+**Data-quality flag:** the dictionary's own row for `ddimer_7_cat` describes it as "D-dimer
+day 3 category" — an apparent copy-paste error in the published supplement. Verify against
+the data before using the day-7 D-dimer variable.
+
+---
+
 ## D8 — The sTNFR1 coefficient we were handed was wrong (day 0)
 
 **Trigger:** the equation supplied in `PRIOR_ART.md` gives the sTNFR1 coefficient as
