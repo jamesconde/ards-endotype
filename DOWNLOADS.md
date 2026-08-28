@@ -104,17 +104,55 @@ wget -c https://ftp.ncbi.nlm.nih.gov/geo/platforms/GPL6244/annot/GPL6244.annot.g
 
 ---
 
-## 5. MGH COVID Olink Explore 1536 — Layer 1 proteomics (~200 MB)
+## 5. MGH COVID Olink Explore 1536 — Layer 1 proteomics (25.8 MB) ✅ DOWNLOADED
 
-**Manual, requires free registration.** No wget line exists for this one.
+**The URL in the spec (`olink.com/mgh-covid-study`) is dead — it 404s.** Olink removed the
+landing page but never removed the file. There is **no registration and no DUA**; the old
+gate was a marketing form that no longer exists.
 
-1. Go to <https://www.olink.com/mgh-covid-study/>
-2. Register (free) and download the NPX data file and the clinical/metadata file
-3. Put both in `data/olink_mgh/` under their original filenames
+```bash
+cd data/olink_mgh
+wget -O MGH_Olink_COVID_Apr_27_2021.zip \
+  "https://f.hubspotusercontent40.net/hubfs/7074596/MGH-Broad%20Covid%20study/MGH_Olink_COVID_Apr_27_2021.zip"
+md5sum MGH_Olink_COVID_Apr_27_2021.zip   # c13826c4f9c3ad0501649008abb811f5
+unzip -q MGH_Olink_COVID_Apr_27_2021.zip && rm -rf __MACOSX
+```
 
-Ships as a long-format NPX file plus a separate clinical file. **Do not assume column
-names** (§3.1) — the scoping script prints both schemas and writes the observed columns
-into `config/olink_schema_observed.yaml`, which every later script reads.
+The paper's citable deposit is Mendeley `10.17632/nf853r8xsj` — **but you must use version
+`/2`**. The Key Resources Table cites `/1`, whose NPX table is a 255-protein subset that
+does not include TNFRSF1A. Prefer the ZIP regardless: it is the April 2021 revision with
+per-plate LOD (1,472 assays vs Mendeley's 1,429) and it ships long-format with gene names,
+where Mendeley is wide-format with bare OlinkID headers.
+
+**Verified contents** (parsed directly, not assumed):
+
+| File | Shape |
+|---|---|
+| `MGH_COVID_OLINK_NPX.txt` | 1,271,808 × 16, semicolon-delimited, long format |
+| `MGH_COVID_Clinical_Info.txt` | 384 × 44, semicolon-delimited |
+| `Variable_descriptions_2021-04-27.xlsx` | data dictionary |
+
+Join on `subject_id`. 792 SampleIDs, of which **8 are QC/plate controls with a blank
+`Timepoint` — filter these out first**. Timepoints are `D0` (383), `D3` (219), `D7` (139),
+`DE` (41, an event draw such as ICU admission), plus two singleton `DE.1`/`DE.2`.
+**132 subjects have all three of D0/D3/D7; 226 have at least two.** One subject (id 180)
+appears in the clinical file with no proteomics, so 383 subjects carry NPX.
+
+> ⚠️ **Two version traps.**
+> 1. This release uses **`Acuity_0/3/7/28/max` on a 1–5 scale** (1 = death, 5 = discharged).
+>    The earlier release used **WHO 0/3/7/28 on a 1–6 scale**. A data dictionary describing
+>    WHO columns belongs to the *old* version. Do not mix the two encodings; take the
+>    clinical file from this ZIP.
+> 2. **TNFRSF1A is on the NEUROLOGY panel (OID21155)**, not Inflammation. Subsetting to the
+>    Inflammation panel silently deletes it. IL6 appears on all four panels
+>    (OID20101/20563/20911/21276) — pick one and say which.
+>
+> Match proteins on **UniProt**, never on assay name: this protein is `TNFRSF1A` here,
+> `TNF-R1` in Olink Target 96, and `TNF sR-I` in SomaScan.
+
+**There is no bicarbonate, lactate, pH or any blood gas in the clinical file** — see
+DECISIONS.md D9. Beware greps for "lactate", which false-match "Lactate dehydrogenase"
+(`ldh_*_cat`). LDH is not lactate.
 
 ---
 

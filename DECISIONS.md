@@ -183,12 +183,25 @@ NPX is. D3 applies unchanged to CounterCOVID. Any cohort on a relative platform 
 rank-based concordance only, never evaluation of the published fixed-coefficient equation.
 The only thing that would change this is an absolute-concentration immunoassay cohort.
 
-### Still open
+### RESOLVED same day — MGH data obtained
 
-Where the MGH Explore 1536 data is actually downloadable today, and whether bicarbonate
-exists anywhere in its clinical file (D9 says it is absent from the data dictionary in
-hand). Both are being verified. Until they resolve, **Layer 1's proteomic arm has no
-confirmed data source**, and Layer 2 — which needs neither — remains the critical path.
+The file was never removed, only its landing page. No registration, no DUA. Downloaded,
+md5-verified (`c13826c4f9c3ad0501649008abb811f5`) and parsed; access route and verified
+structure are in DOWNLOADS.md §5. **Layer 1's proteomic arm now has a confirmed data
+source.**
+
+Independently checked rather than taken on trust: 1,271,808 x 16 long-format NPX, 384 x 44
+clinical, 1,472 assays, 383 subjects with proteomics (subject 180 is clinical-only), 8 QC
+controls to filter, 132 subjects with all three of D0/D3/D7 and 226 with at least two.
+At day 0, 1,288 of 1,472 assays survive the >50%-below-LOD filter. IL6 and TNFRSF1A are
+essentially never below LOD (0.5% and 0.0%), and both show clean monotonic gradients across
+the acuity ordinal — median IL6 NPX runs 3.99 at acuity 1 (death) down to 1.53 at acuity 5
+(discharged), TNFRSF1A -0.17 down to -1.59. The signal §3.7 depends on is present.
+
+**Version trap worth its own line:** this release uses `Acuity_*` on a 1-5 scale; the
+earlier release used `WHO_*` on 1-6. The data dictionary obtained separately describes the
+WHO version, so it documents a *different* release than the file we are using. Take the
+clinical file from the ZIP and do not mix encodings.
 
 ---
 
