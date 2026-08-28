@@ -69,6 +69,24 @@ static_features:
   derived: [sf_ratio, MAP]
   # HCO3 carries the Sinha 2020 comparator and the §5 cross-layer link.
 
+# Frozen day 1 after the A/B coverage scan (DECISIONS.md D12).
+# Variables whose patient-level coverage differs by < 10 percentage points
+# between the two hospital systems, with both above 50%. Fitting the transfer
+# experiment on THIS set means a performance drop on B is attributable to case
+# mix rather than to charting behaviour. The full static_features set above is
+# retained for the deliberately-naive comparison.
+transferable_features:
+  demographics: [Age, Gender, HospAdmTime]
+  vitals: [HR, O2Sat, Resp, MAP, Temp, SBP]
+  labs: [Glucose, Potassium, Creatinine, BUN, WBC, Platelets, Hgb, Hct]
+  # DBP is EXCLUDED despite being a vital: 63.7% in A vs 99.9% in B.
+  # The blood-gas block (HCO3, Chloride, BaseExcess, pH, PaCO2) is excluded
+  # outright — see D12. HCO3 is 97.4% in A and 2.1% in B.
+
+# FiO2 is a special case: 58.9% in A vs 29.1% in B. It is not a model feature,
+# it defines the cohort, so the gap changes who is enrolled at each site rather
+# than what the model sees. Reported in the attrition table for both systems.
+
 clustering:
   k_range: [2, 3, 4]
   n_restarts: 100

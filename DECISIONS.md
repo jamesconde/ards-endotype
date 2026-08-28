@@ -145,6 +145,89 @@ strengthens this project's relevance; the critique is a ready-made limitations p
 
 ---
 
+## D12 — Sets A and B differ in measurement practice, not just case mix. §4.5d is restructured (day 1)
+
+**This is the most consequential finding of scoping, and it changes the analysis plan.**
+SPEC.md §1.5 requires that if scoping shows the plan is infeasible, the plan is changed
+explicitly and the change is written down. This is that entry.
+
+### The finding
+
+Patient-level coverage, set A (20,336) vs set B (20,000):
+
+| Variable | A | B | gap |
+|---|---|---|---|
+| `HCO3` | 97.4% | **2.1%** | 95.3 pp |
+| `Chloride` | 97.3% | 8.1% | 89.2 pp |
+| `BaseExcess` | 62.2% | 2.8% | 59.4 pp |
+| `PTT` | 77.9% | 22.0% | 55.9 pp |
+| `pH` | 64.8% | 28.8% | 36.0 pp |
+| `PaCO2` | 61.9% | 28.9% | 33.0 pp |
+| `FiO2` | 58.9% | 29.1% | 29.8 pp |
+| `DBP` | 63.7% | **99.9%** | 36.2 pp |
+| `TroponinI` | 2.4% | **32.8%** | 30.4 pp |
+
+**The pattern is coherent, not noise.** Site A charts arterial blood gases and the
+associated chemistry panel; site B largely does not. Site B charts diastolic pressure and
+troponin *more*. This is two hospitals with different ordering and charting behaviour — it
+is not a data-quality defect, and the direction runs both ways, which is what rules out
+"set B is simply worse."
+
+Meanwhile 19 variables are closely comparable (gap < 10 pp, both ≥ 50%): all demographics,
+all vitals except DBP, and the CBC/basic-chemistry block — `Glucose`, `Potassium`,
+`Creatinine`, `BUN`, `WBC`, `Platelets`, `Hgb`, `Hct`.
+
+### Why the spec's §4.5d cannot be run as written
+
+Training on A, freezing, and applying to B would show severe degradation, and that
+degradation would be **almost entirely a measurement-practice artifact**. §4.5d itself
+warns: "if sets A and B differ substantially in coverage or case mix, a performance drop is
+a missingness artifact, not a transfer failure. Getting this distinction wrong would
+invalidate P2." It does, and it would.
+
+Worse for the comparator: **`HCO3` is the only variable of the published parsimonious model
+that EHR data contains at all, and at site B it is recorded for 2.1% of patients.** The
+reference classifier is not degraded at site B — it is uncomputable there.
+
+### The restructure
+
+Three experiments replace one, and the difference between the first two *is* the
+decomposition §4.5d asks for:
+
+1. **Restricted transfer (the clean test).** Fit on A, freeze, apply to B, using only the
+   19 comparable variables. Coverage is matched by construction, so a performance drop is
+   attributable to case mix and genuine distribution shift rather than to charting.
+2. **Naive transfer (the deployment reality).** The same experiment using the full §4.4
+   feature set, including the blood-gas block. Expected to fail badly. Reported as what
+   happens when a model is moved to a site that does not measure what it needs.
+3. **Coverage-shift report as a primary result**, not a caveat. The table above answers the
+   question PRIOR_ART.md §5 named as potentially the project's headline: how often are the
+   published classifier's variables actually observed? At one of two hospitals, essentially
+   never.
+
+### Why this strengthens the project rather than damaging it
+
+The narrowed thesis in PRIOR_ART.md §1 is whether published classifiers survive routine,
+sparsely-measured data and how gracefully they degrade as the variables go missing. A
+95-point cross-hospital gap in the single most important variable is a direct, quantified
+answer, observed rather than simulated. It is also the honest answer to the operational
+question GEn1E faces — *can we screen for this trial with the data we will really have?* —
+and at site B, for this classifier, the answer is no.
+
+The §4.5c ablation (C5) was going to *simulate* progressive variable removal. This is the
+same phenomenon occurring naturally between two real hospitals, which is stronger evidence
+than a simulation and costs nothing extra.
+
+### Cohort sizes, for planning
+
+Set A yields 4,682 patients at S/F ≤ 235; set B yields 1,007; combined 5,689. Set B alone
+falls below the 1,500 floor in `cohort_params.yaml`, driven by its lower FiO2 coverage
+(29.1% vs 58.9%). **The relaxation is NOT triggered**, because the rule applies to the
+primary cohort, which is viable at 5,689. Set B's 1,007 is small for a validation set and
+its confidence intervals must be reported wide.
+
+---
+
 ## D11 — Proteomics cohort landscape, and three traps (day 1, partly OPEN)
 
 Prompted by the `olink.com/mgh-covid-study` link in DOWNLOADS.md returning no accessible

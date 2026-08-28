@@ -6,46 +6,67 @@
 
 | source        | present   |   size_mb |   n_files | expected                        |
 |:--------------|:----------|----------:|----------:|:--------------------------------|
-| challenge2019 | True      |     182.3 |     27544 | ~42 MB, 40,336 .psv files       |
-| eicu_demo     | False     |       0   |         0 | ~50 MB, eICU relational tables  |
-| mimic_iv_demo | False     |       0   |         0 | ~100 MB, smoke tests only       |
-| geo           | False     |       0   |         0 | 3 series matrices (.txt.gz)     |
-| olink_mgh     | True      |       0   |         1 | NPX + clinical, manual download |
+| challenge2019 | True      |     261.7 |     40351 | ~42 MB, 40,336 .psv files       |
+| eicu_demo     | True      |     137   |        38 | ~50 MB, eICU relational tables  |
+| mimic_iv_demo | True      |      16.2 |        41 | ~100 MB, smoke tests only       |
+| geo           | True      |     125.2 |         3 | 3 series matrices (.txt.gz)     |
+| olink_mgh     | True      |     171.8 |         5 | NPX + clinical, manual download |
 
 ## Challenge 2019
 
-- Patient files: **20,336** (expected 40,336); split {'A': 20336}
-- ICULOS: median 39h, IQR 25–47h; **77.9% have ≥24h of record**
-- Sepsis (any hour): 8.8%
+- Patient files: **40,336** (expected 40,336); split {'A': 20336, 'B': 20000, 'unknown': 0}
+- ICULOS: median 38h, IQR 24–47h; **76.0% have ≥24h of record**
+- Sepsis (any hour): 7.3%
 
 ### Coverage of the columns the plan depends on
 
 | Variable | Patients with ≥1 value | Hour-level density |
 |---|---|---|
-| `FiO2` | 58.9% | 14.19% |
-| `O2Sat` | 99.9% | 87.97% |
-| `SaO2` | 39.2% | 4.96% |
-| `HCO3` | 97.4% | 8.05% |
-| `Lactate` | 38.0% | 3.43% |
-| `Creatinine` | 97.7% | 6.64% |
-| `Bilirubin_total` | 28.4% | 1.23% |
-| `Platelets` | 97.1% | 6.52% |
-| `WBC` | 96.9% | 7.51% |
-| `pH` | 64.8% | 11.47% |
-| `BaseExcess` | 62.2% | 10.43% |
+| `FiO2` | 44.1% | 8.33% |
+| `O2Sat` | 100.0% | 86.94% |
+| `SaO2` | 32.5% | 3.45% |
+| `HCO3` | 50.1% | 4.19% |
+| `Lactate` | 31.0% | 2.67% |
+| `Creatinine` | 94.9% | 6.10% |
+| `Bilirubin_total` | 35.3% | 1.49% |
+| `Platelets` | 93.6% | 5.94% |
+| `WBC` | 93.5% | 6.41% |
+| `pH` | 46.9% | 6.93% |
+| `BaseExcess` | 32.8% | 5.42% |
 
-**FiO2 coverage is 58.9%.** The cohort definition (§4.3) is built on it, so requiring a recorded FiO2 selects for oxygen-supported and more heavily monitored patients. If this is low, §4.3 needs rewriting before it is written, and Table 1 must show the selection.
+**FiO2 coverage is 44.1%.** The cohort definition (§4.3) is built on it, so requiring a recorded FiO2 selects for oxygen-supported and more heavily monitored patients. If this is low, §4.3 needs rewriting before it is written, and Table 1 must show the selection.
 
-**Joint FiO2 + HCO3 coverage: 57.7%.** PRIOR_ART.md §5 argues that how often the published classifiers' variable sets are *fully observed* may be the project's headline result. This is that number, for the two variables this cohort has.
+**Joint FiO2 + HCO3 coverage: 30.0%.** PRIOR_ART.md §5 argues that how often the published classifiers' variable sets are *fully observed* may be the project's headline result. This is that number, for the two variables this cohort has.
 
 ### Selection induced by requiring FiO2 (§6.2)
 
 | Variable | With FiO2 | Without FiO2 | Std. diff |
 |---|---|---|---|
-| Age | 63.358 | 61.564 | 0.11 |
-| ICULOS | 43.293 | 34.722 | 0.406 |
-| n_hours | 42.062 | 34.258 | 0.372 |
-| sepsis_any | 0.12 | 0.042 | 0.288 |
+| Age | 62.716 | 60.795 | 0.117 |
+| ICULOS | 44.284 | 34.841 | 0.407 |
+| n_hours | 43.384 | 34.607 | 0.38 |
+| sepsis_any | 0.123 | 0.033 | 0.343 |
+
+### Set A vs set B coverage — *transfer test or missingness test?*
+
+This determines what §4.5d is actually measuring. If A and B differ substantially in coverage, a performance drop on B is a missingness artifact, not a transfer failure, and reporting it as transfer would invalidate the experiment.
+
+| Variable | A | B | |Δ| |
+|---|---|---|---|
+| `HCO3` | 97.4% | 2.1% | 95.3% |
+| `Chloride` | 97.3% | 8.1% | 89.2% |
+| `BaseExcess` | 62.2% | 2.8% | 59.4% |
+| `PTT` | 77.9% | 22.0% | 55.9% |
+| `DBP` | 63.7% | 99.9% | 36.2% |
+| `pH` | 64.8% | 28.8% | 36.0% |
+| `PaCO2` | 61.9% | 28.9% | 33.0% |
+| `TroponinI` | 2.4% | 32.8% | 30.4% |
+| `FiO2` | 58.9% | 29.1% | 29.8% |
+| `Phosphate` | 82.0% | 58.2% | 23.9% |
+| `Unit1` | 53.2% | 69.5% | 16.4% |
+| `Unit2` | 53.2% | 69.5% | 16.4% |
+
+Largest coverage gap: **95.3%**. Large — A→B confounds transfer with measurement practice. §4.5d must decompose the two, and the README must say which is being measured.
 
 ### Sinha 2020 variables in this cohort
 
@@ -55,15 +76,500 @@
 
 ## GEO transcriptomics
 
-Not downloaded. See DOWNLOADS.md §4.
+```json
+{
+  "present": true,
+  "series": {
+    "GSE65682": {
+      "present": true,
+      "file": "GSE65682_series_matrix.txt.gz",
+      "n_probes_approx": 24646,
+      "characteristics": {
+        "Sample_title": [
+          {
+            "n_unique": 802,
+            "examples": [
+              "healthy subject [03_04_2013_E09_hv59]",
+              "healthy subject [03_04_2013_F10_hv49]",
+              "healthy subject [13_03_2013_F09_hv45]",
+              "healthy subject [13_03_2013_F12_hv32]",
+              "healthy subject [14_03_2013_A10_hv35]",
+              "healthy subject [14_03_2013_A12_hv21]",
+              "healthy subject [14_03_2013_B03_hv15]",
+              "healthy subject [14_03_2013_B10_hv40]",
+              "healthy subject [14_03_2013_C02_hv56]",
+              "healthy subject [14_03_2013_C05_hv52]",
+              "healthy subject [14_03_2013_G11_hv55]",
+              "healthy subject [19_03_2013_D02_hv43]"
+            ]
+          }
+        ],
+        "Sample_characteristics_ch1": [
+          {
+            "n_unique": 2,
+            "examples": [
+              "gender: female",
+              "gender: male"
+            ]
+          },
+          {
+            "n_unique": 75,
+            "examples": [
+              "age: 17",
+              "age: 18",
+              "age: 19",
+              "age: 20",
+              "age: 21",
+              "age: 22",
+              "age: 23",
+              "age: 24",
+              "age: 25",
+              "age: 26",
+              "age: 27",
+              "age: 28"
+            ]
+          },
+          {
+            "n_unique": 4,
+            "examples": [
+              "pneumonia diagnoses: NA",
+              "pneumonia diagnoses: cap",
+              "pneumonia diagnoses: hap",
+              "pneumonia diagnoses: no-cap"
+            ]
+          },
+          {
+            "n_unique": 5,
+            "examples": [
+              "thrombocytopenia: A_very_low",
+              "thrombocytopenia: B_medium_low",
+              "thrombocytopenia: C_low",
+              "thrombocytopenia: D_normal",
+              "thrombocytopenia: NA"
+            ]
+          },
+          {
+            "n_unique": 3,
+            "examples": [
+              "endotype_cohort: NA",
+              "endotype_cohort: discovery",
+              "endotype_cohort: validation"
+            ]
+          },
+          {
+            "n_unique": 5,
+            "examples": [
+              "endotype_class: Mars1",
+              "endotype_class: Mars2",
+              "endotype_class: Mars3",
+              "endotype_class: Mars4",
+              "endotype_class: NA"
+            ]
+          },
+          {
+            "n_unique": 3,
+            "examples": [
+              "mortality_event_28days: 0",
+              "mortality_event_28days: 1",
+              "mortality_event_28days: NA"
+            ]
+          },
+          {
+            "n_unique": 27,
+            "examples": [
+              "time_to_event_28days: 0",
+              "time_to_event_28days: 1",
+              "time_to_event_28days: 10",
+              "time_to_event_28days: 11",
+              "time_to_event_28days: 12",
+              "time_to_event_28days: 13",
+              "time_to_event_28days: 14",
+              "time_to_event_28days: 15",
+              "time_to_event_28days: 16",
+              "time_to_event_28days: 17",
+              "time_to_event_28days: 18",
+              "time_to_event_28days: 19"
+            ]
+          },
+          {
+            "n_unique": 4,
+            "examples": [
+              "icu_acquired_infection: ICUA",
+              "icu_acquired_infection: NA",
+              "icu_acquired_infection: No_ICUA",
+              "icu_acquired_infection: healthy"
+            ]
+          },
+          {
+            "n_unique": 5,
+            "examples": [
+              "icu_acquired_infection_paired: ADMIS_NO_ICUAI",
+              "icu_acquired_infection_paired: Admis_ICUAI",
+              "icu_acquired_infection_paired: Event_ICUAI",
+              "icu_acquired_infection_paired: NA",
+              "icu_acquired_infection_paired: healthy"
+            ]
+          },
+          {
+            "n_unique": 3,
+            "examples": [
+              "diabetes_mellitus: DM",
+              "diabetes_mellitus: NA",
+              "diabetes_mellitus: No_DM"
+            ]
+          },
+          {
+            "n_unique": 3,
+            "examples": [
+              "abdominal_sepsis_and_controls: NA",
+              "abdominal_sepsis_and_controls: abdo_s",
+              "abdominal_sepsis_and_controls: ctrl_GI"
+            ]
+          }
+        ]
+      },
+      "n_samples": 802,
+      "mars_label_search": {
+        "tokens_found": [
+          "mars1",
+          "mars2",
+          "mars3",
+          "mars4",
+          "endotype",
+          "class"
+        ],
+        "verdict": "MARS labels appear present \u2014 confirm the exact field"
+      }
+    },
+    "GSE32707": {
+      "present": true,
+      "file": "GSE32707_series_matrix.txt.gz",
+      "n_probes_approx": 47220,
+      "characteristics": {
+        "Sample_title": [
+          {
+            "n_unique": 144,
+            "examples": [
+              "sample  21_Sepsis Day 0",
+              "sample 100_se/ARDS Day 7",
+              "sample 101_SIRS Day 0",
+              "sample 102_Sepsis Day 0",
+              "sample 103_Sepsis Day 7",
+              "sample 104_Sepsis Day 0",
+              "sample 105_Sepsis Day 7",
+              "sample 106_Sepsis Day 0",
+              "sample 107_Sepsis Day 7",
+              "sample 108_Sepsis Day 0",
+              "sample 109_Sepsis Day 7",
+              "sample 10_se/ARDS Day 0"
+            ]
+          }
+        ],
+        "Sample_characteristics_ch1": [
+          {
+            "n_unique": 131,
+            "examples": [
+              "subject id: 128115",
+              "subject id: 169691",
+              "subject id: 169692",
+              "subject id: 169694",
+              "subject id: 169695",
+              "subject id: 169696",
+              "subject id: 1
+```
 
 ## MGH Olink
 
-Not downloaded. See DOWNLOADS.md §5.
+```json
+{
+  "present": true,
+  "files": {
+    "Variable_descriptions_2021-04-27.xlsx": {
+      "size_mb": 0.01,
+      "error": "could not parse /home/james/ards-endotypes/data/olink_mgh/Variable_descriptions_2021-04-27.xlsx"
+    },
+    "MGH_COVID_OLINK_NPX.txt": {
+      "size_mb": 145.89,
+      "columns": [
+        "SampleID",
+        "subject_id",
+        "Timepoint",
+        "Index",
+        "OlinkID",
+        "UniProt",
+        "Assay",
+        "MissingFreq",
+        "Panel",
+        "Panel_Lot_Nr",
+        "PlateID",
+        "QC_Warning",
+        "Assay_Warning",
+        "Normalization",
+        "LOD",
+        "NPX"
+      ],
+      "n_cols": 16,
+      "looks_like_long_npx": true,
+      "n_assays": 1463,
+      "has_IL6": true,
+      "has_IL-6": false,
+      "has_TNFRSF1A": true,
+      "has_TNFR1": false,
+      "lod_column": "LOD",
+      "frac_below_lod_overall": 0.1535,
+      "timepoint_column": "Timepoint",
+      "timepoints": [
+        "D0",
+        "D3",
+        "D7",
+        "DE",
+        "DE.1",
+        "DE.2"
+      ]
+    },
+    "mgh_clinical_data_dictionary.xlsx": {
+      "size_mb": 0.01,
+      "error": "could not parse /home/james/ards-endotypes/data/olink_mgh/mgh_clinical_data_dictionary.xlsx"
+    },
+    "MGH_COVID_Clinical_Info.txt": {
+      "size_mb": 0.03,
+      "columns": [
+        "subject_id",
+        "COVID",
+        "Age_cat",
+        "BMI_cat",
+        "HEART",
+        "LUNG",
+        "KIDNEY",
+        "DIABETES",
+        "HTN",
+        "IMMUNO",
+        "Resp_Symp",
+        "Fever_Sympt",
+        "GI_Symp",
+        "D0_draw",
+        "D3_draw",
+        "D7_draw",
+        "DE_draw",
+        "Acuity_0",
+        "Acuity_3",
+        "Acuity_7",
+        "Acuity_28",
+        "Acuity_max",
+        "abs_neut_0_cat",
+        "abs_lymph_0_cat",
+        "abs_mono_0_cat",
+        "creat_0_cat",
+        "crp_0_cat",
+        "ddimer_0_cat",
+        "ldh_0_cat",
+        "Trop_72h",
+        "abs_neut_3_cat",
+        "abs_lymph_3_cat",
+        "abs_mono_3_cat",
+        "creat_3_cat",
+        "crp_3_cat",
+        "ddimer_3_cat",
+        "ldh_3_cat",
+        "abs_neut_7_cat",
+        "abs_lymph_7_cat",
+        "abs_mono_7_cat",
+        "creat_7_cat",
+        "crp_7_cat",
+        "ddimer_7_cat",
+        "ldh_7_cat"
+      ],
+      "n_cols": 44,
+      "looks_like_long_npx": false
+    }
+  }
+}
+```
 
 ## eICU demo
 
-Not downloaded. See DOWNLOADS.md §2.
+```json
+{
+  "present": true,
+  "tables": {
+    "patient": {
+      "present": true,
+      "file": "patient.csv.gz",
+      "size_mb": 0.14,
+      "columns": [
+        "patientunitstayid",
+        "patienthealthsystemstayid",
+        "gender",
+        "age",
+        "ethnicity",
+        "hospitalid",
+        "wardid",
+        "apacheadmissiondx",
+        "admissionheight",
+        "hospitaladmittime24",
+        "hospitaladmitoffset",
+        "hospitaladmitsource",
+        "hospitaldischargeyear",
+        "hospitaldischargetime24",
+        "hospitaldischargeoffset",
+        "hospitaldischargelocation",
+        "hospitaldischargestatus",
+        "unittype",
+        "unitadmittime24",
+        "unitadmitsource",
+        "unitvisitnumber",
+        "unitstaytype",
+        "admissionweight",
+        "dischargeweight",
+        "unitdischargetime24",
+        "unitdischargeoffset",
+        "unitdischargelocation",
+        "unitdischargestatus",
+        "uniquepid"
+      ],
+      "n_rows": 2520,
+      "hospitaldischargestatus_nonnull_frac": 0.9889,
+      "hospitaldischargestatus_values": {
+        "Alive": 2280,
+        "Expired": 212
+      },
+      "unitdischargestatus_nonnull_frac": 0.9992,
+      "unitdischargestatus_values": {
+        "Alive": 2392,
+        "Expired": 126
+      },
+      "hospitalid_nonnull_frac": 1.0,
+      "n_hospitals": 186
+    },
+    "vitalPeriodic": {
+      "present": true,
+      "file": "vitalPeriodic.csv.gz",
+      "size_mb": 19.39,
+      "columns": [
+        "vitalperiodicid",
+        "patientunitstayid",
+        "observationoffset",
+        "temperature",
+        "sao2",
+        "heartrate",
+        "respiration",
+        "cvp",
+        "etco2",
+        "systemicsystolic",
+        "systemicdiastolic",
+        "systemicmean",
+        "pasystolic",
+        "padiastolic",
+        "pamean",
+        "st1",
+        "st2",
+        "st3",
+        "icp"
+      ]
+    },
+    "lab": {
+      "present": true,
+      "file": "lab.csv.gz",
+      "size_mb": 5.73,
+      "columns": [
+        "labid",
+        "patientunitstayid",
+        "labresultoffset",
+        "labtypeid",
+        "labname",
+        "labresult",
+        "labresulttext",
+        "labmeasurenamesystem",
+        "labmeasurenameinterface",
+        "labresultrevisedoffset"
+      ]
+    },
+    "apachePatientResult": {
+      "present": true,
+      "file": "apachePatientResult.csv.gz",
+      "size_mb": 0.21,
+      "columns": [
+        "apachepatientresultsid",
+        "patientunitstayid",
+        "physicianspeciality",
+        "physicianinterventioncategory",
+        "acutephysiologyscore",
+        "apachescore",
+        "apacheversion",
+        "predictedicumortality",
+        "actualicumortality",
+        "predictediculos",
+        "actualiculos",
+        "predictedhospitalmortality",
+        "actualhospitalmortality",
+        "predictedhospitallos",
+        "actualhospitallos",
+        "preopmi",
+        "preopcardiaccath",
+        "ptcawithin24h",
+        "unabridgedunitlos",
+        "unabridgedhosplos",
+        "actualventdays",
+        "predventdays",
+        "unabridgedactualventdays"
+      ]
+    },
+    "respiratoryCare": {
+      "present": true,
+      "file": "respiratoryCare.csv.gz",
+      "size_mb": 0.06,
+      "columns": [
+        "respcareid",
+        "patientunitstayid",
+        "respcarestatusoffset",
+        "currenthistoryseqnum",
+        "airwaytype",
+        "airwaysize",
+        "airwayposition",
+        "cuffpressure",
+        "ventstartoffset",
+        "ventendoffset",
+        "priorventstartoffset",
+        "priorventendoffset",
+        "apneaparams",
+        "lowexhmvlimit",
+        "hiexhmvlimit",
+        "lowexhtvlimit",
+        "hipeakpreslimit",
+        "lowpeakpreslimit",
+        "hirespratelimit",
+        "lowrespratelimit",
+        "sighpreslimit",
+        "lowironoxlimit",
+        "highironoxlimit",
+        "meanairwaypreslimit",
+        "peeplimit",
+        "cpaplimit",
+        "setapneainterval",
+        "setapneatv",
+        "setapneaippeephigh",
+        "setapnearr",
+        "setapneapeakflow",
+        "setapneainsptime",
+        "setapneaie",
+        "setapneafio2"
+      ]
+    },
+    "treatment": {
+      "present": true,
+      "file": "treatment.csv.gz",
+      "size_mb": 0.46,
+      "columns": [
+        "treatmentid",
+        "patientunitstayid",
+        "treatmentoffset",
+        "treatmentstring",
+        "activeupondischarge"
+      ]
+    }
+  }
+}
+```
 
 ---
 
