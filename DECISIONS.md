@@ -68,10 +68,6 @@ invisible — the outputs would still look like probabilities. Concretely, one p
 IL-6 500 pg/mL and sTNFR1 10,000 pg/mL differs by roughly 14 log-odds units between the
 pg/mL and ng/mL readings. Every classification flips; the prevalence still looks plausible.
 
-**Why this is logged rather than quietly handled:** a wrong-unit reference classifier
-would silently miscalibrate every downstream comparison in both layers, and it would be
-invisible — the outputs would still look like probabilities.
-
 ---
 
 ## D3 — Olink NPX cannot be fed to the Sinha equation (day 0)
