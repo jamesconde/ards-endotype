@@ -145,6 +145,53 @@ strengthens this project's relevance; the critique is a ready-made limitations p
 
 ---
 
+## D11 — Proteomics cohort landscape, and three traps (day 1, partly OPEN)
+
+Prompted by the `olink.com/mgh-covid-study` link in DOWNLOADS.md returning no accessible
+page. A verification pass produced the following. Items marked **verified** were confirmed
+by downloading and parsing the file; the rest are second-hand and marked as such.
+
+### Traps that would have cost real time
+
+1. **In Olink Explore 1536, TNFRSF1A sits on the NEUROLOGY panel (OID21155)** — not
+   Inflammation and not Cardiometabolic. A reasonable-looking decision to subset to the
+   Inflammation panel silently drops one of the two proteins the whole §3.7 comparator
+   depends on. **Never subset Explore panels before checking which panel each target is on.**
+2. **Assay names are not gene symbols.** The same protein appears as `TNFRSF1A`, `TNF-R1`
+   (Olink Target 96, Gisby) and `TNF sR-I` (SomaScan). Match on **UniProt (P19438)** or
+   gene ID, never on the assay label, or the join returns zero rows and looks like absence.
+3. **Olink Target 96 CVD-II does not contain TNFRSF1A** — it is on CVD-III. Relevant only
+   if a Target 96 cohort is used, but it is the kind of assumption that goes unchecked.
+
+### Substitutes, if MGH access does not resolve
+
+**CounterCOVID (Duijvelaar et al., Nat Commun 2024;15:744)** — **verified**, no
+registration, direct download:
+`https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-024-44986-w/MediaObjects/41467_2024_44986_MOESM6_ESM.xlsx`
+(~29.7 MB). 332 patients, 535 samples, 203 with two timepoints, SomaScan ~7.3k. IL-6 and
+TNFRSF1A both present. Crucially it carries **hard outcomes**: death, invasive ventilation,
+day-28 and day-90 status. Caveat: it is the CounterCOVID imatinib RCT, so the randomised
+arm is a covariate that must be adjusted for, not ignored.
+
+**Gisby et al., eLife 2021** — Olink Target 96, downloadable from GitHub without a Dryad
+bot wall. Only 55 cases, which is thin for clustering.
+
+### The unit problem does NOT go away by switching cohorts
+
+SomaScan reports RFU — relative fluorescence units — which is no more a concentration than
+NPX is. D3 applies unchanged to CounterCOVID. Any cohort on a relative platform supports
+rank-based concordance only, never evaluation of the published fixed-coefficient equation.
+The only thing that would change this is an absolute-concentration immunoassay cohort.
+
+### Still open
+
+Where the MGH Explore 1536 data is actually downloadable today, and whether bicarbonate
+exists anywhere in its clinical file (D9 says it is absent from the data dictionary in
+hand). Both are being verified. Until they resolve, **Layer 1's proteomic arm has no
+confirmed data source**, and Layer 2 — which needs neither — remains the critical path.
+
+---
+
 ## D10 — FiO2 needs a physiological validity window (day 1)
 
 **Trigger:** scoping set A found `FiO2` ranging from 0.000 to 10.000 on a fraction scale
