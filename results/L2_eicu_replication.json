@@ -1,0 +1,47 @@
+{
+  "cohort_n": 386,
+  "deaths": 93,
+  "mortality_rate": 0.2409,
+  "n_hospitals": 125,
+  "features_transferred": [
+    "HR",
+    "O2Sat",
+    "Resp",
+    "MAP",
+    "Temp",
+    "SBP",
+    "Glucose",
+    "Potassium",
+    "Creatinine",
+    "BUN",
+    "WBC",
+    "Platelets",
+    "Hgb",
+    "Hct"
+  ],
+  "features_unavailable": [],
+  "predicted_hyper_prevalence": 0.3679,
+  "mortality_by_class": [
+    {
+      "class": 0,
+      "n": 244,
+      "deaths": 41,
+      "mortality": 0.168,
+      "ci_low": 0.1234,
+      "ci_high": 0.221
+    },
+    {
+      "class": 1,
+      "n": 142,
+      "deaths": 52,
+      "mortality": 0.3662,
+      "ci_low": 0.287,
+      "ci_high": 0.4511
+    }
+  ],
+  "fisher_p": 0.0,
+  "significant": true,
+  "auc_mortality_endotype": 0.6338,
+  "auc_mortality_apache_iva": 0.6995,
+  "caveat": "Small n and wide intervals by construction \u2014 the eICU demo is ~2,500 stays and the hypoxemic subset is far smaller. \u00a76.1: if this cannot support a stable estimate, the mortality question stays open rather than being answered with a substitute."
+}
