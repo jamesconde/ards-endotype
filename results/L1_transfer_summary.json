@@ -1,0 +1,64 @@
+{
+  "signature_class": "Mars1",
+  "signature_genes": 56,
+  "cohorts": {
+    "GSE32707": {
+      "n": 144,
+      "genes_used": 54,
+      "group_means": {
+        "SIRS Day 0": 0.3883,
+        "Sepsis Day 0": 0.3649,
+        "Sepsis Day 7": 0.3893,
+        "se/ARDS Day 0": 0.3912,
+        "se/ARDS Day 7": 0.3909,
+        "untreated": 0.3874
+      },
+      "by_pheno_day": [
+        {
+          "pheno": "SIRS",
+          "day": "0",
+          "mean": 0.3883,
+          "count": 21
+        },
+        {
+          "pheno": "Sepsis",
+          "day": "0",
+          "mean": 0.3649,
+          "count": 30
+        },
+        {
+          "pheno": "Sepsis",
+          "day": "7",
+          "mean": 0.3893,
+          "count": 28
+        },
+        {
+          "pheno": "se/ARDS",
+          "day": "0",
+          "mean": 0.3912,
+          "count": 18
+        },
+        {
+          "pheno": "se/ARDS",
+          "day": "7",
+          "mean": 0.3909,
+          "count": 13
+        }
+      ]
+    },
+    "GSE66890": {
+      "n": 62,
+      "genes_used": 53,
+      "group_means": {
+        "not meeting the Berlin definition of sepsis with ARDS and that they were excluded from analysis": 0.3588,
+        "sepsis alone": 0.3505,
+        "sepsis with ARDS": 0.37
+      },
+      "cliffs_delta": 0.303,
+      "p": 0.05054,
+      "n_ards": 29,
+      "n_sepsis": 28
+    }
+  },
+  "design": "Signature frozen on GSE65682 and applied with zero refitting. Cohorts never merged (\u00a73.5, \u00a76.5). Single-sample scoring, so no cohort statistic enters the score."
+}

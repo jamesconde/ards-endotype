@@ -40,6 +40,14 @@ systems. The difference runs in both directions — hospital B charts diastolic 
 troponin more — which is why this is measurement practice rather than a data-quality defect
 at one site.*
 
+## Pipeline
+
+![Pipeline overview](figures/pipeline_overview.png)
+
+*Six sources, three modalities. Every model is frozen before it crosses a dataset
+boundary, and the refinement loop's holdout is scored exactly once. The two red boxes are
+the result: a coverage gap between hospitals that becomes a 52-fold screening burden.*
+
 ## What the data is, and is not
 
 - **Primary cohort:** PhysioNet/CinC Challenge 2019 — 40,336 ICU patients, hourly, from two
@@ -114,6 +122,14 @@ seeing them (**ARI 0.385**) — though PAC stays above 0.42 at every k, so no re
 a stable partition. In MGH Olink proteomics, day-0 class predicts acuity at every later
 timepoint with the effect *growing* over time (Cliff's delta −0.34 → −0.51), and **40.3% of
 patients change inflammatory status between day 0 and day 7** — these are states, not traits.
+
+The frozen signature was also scored on two held-out GEO cohorts with zero refitting, on
+two different array platforms. It separates sepsis-with-ARDS from sepsis alone in the
+direction expected but **not significantly** (Cliff's delta +0.303, p=0.051, n=29 vs 28),
+and in the longitudinal cohort the sepsis group's score rises toward the ARDS level between
+day 0 and day 7 (p=0.024) while the ARDS group starts high and stays flat. Reported as the
+near-null it is: the signature was derived to predict MARS endotype, not ARDS status, so
+this is a demanding test rather than a failure.
 
 ## The result that constrains everything above
 
