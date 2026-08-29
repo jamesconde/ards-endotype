@@ -1,100 +1,164 @@
-# Endotyping for precision immunomodulation in acute hypoxemic respiratory failure
+# Can you actually screen for an ARDS trial with the data a hospital really has?
 
-**Status: day 0 of 24. Scaffolding and guardrails only — no results yet.**
-This README is a placeholder for the deliverable described in `SPEC.md` §9. Nothing below
-is a finding.
+**The hyperinflammatory / hypoinflammatory subphenotypes of ARDS are established and
+independently replicated. This project reproduces them; it does not discover them.** They
+were identified by latent class analysis of two randomised trials (Calfee et al., *Lancet
+Respir Med* 2014), recovered across five or more cohorts since, shown to carry differential
+mortality and treatment response, and reduced to parsimonious classifiers (Sinha et al.,
+2020). Full citations in [`CITATIONS.md`](CITATIONS.md).
 
----
+What is open is whether those classifiers survive contact with routine care. Every
+published validation ran in curated research cohorts — ARDSNet trials, EARLI, VALID, LUNG
+SAFE — where variables were measured on protocol and missingness was low by design. This
+asks what happens when you take them to two real hospitals.
 
-## What this is, stated before anything else
+## The headline
 
-The hyperinflammatory / hypoinflammatory subphenotypes of the acute respiratory distress
-syndrome are **well established and independently replicated**, and this project
-**reproduces them rather than discovering them**. They were identified by latent class
-analysis of two randomised trials (Calfee et al., *Lancet Respir Med* 2014) and have since
-been recovered across five or more cohorts, shown to carry differential mortality and
-differential treatment response, and reduced to parsimonious classifiers usable at the
-bedside (Sinha et al., *Lancet Respir Med* 2020; *AJRCCM* 2020). Full citations in
-[`CITATIONS.md`](CITATIONS.md).
+**A frozen classifier scores 82.4% of patients at a second hospital using coverage-matched
+variables, and 1.6% using the variables that work best.**
 
-What is being tested here is not whether those subphenotypes exist. It is:
+The most informative four-variable model is BUN, bicarbonate, creatinine and pH. Two of
+those four are not recorded comparably at the second site — bicarbonate is charted for
+97.4% of patients at hospital A and **2.1%** at hospital B. Translated into trial terms, to
+enrol the same 3,596 patients you would screen **12,494** with the coverage-matched model
+or **647,654** with the blood-gas model. A 52-fold difference in screening burden, from an
+identical trial design, caused entirely by which variables a hospital happens to chart.
 
-> **Do published subphenotype classifiers survive the conditions of routine, sparsely
-> measured, unadjudicated ICU data — and how gracefully do they degrade as the variables
-> they need go missing?**
+That is not "the model degrades." At hospital B the trial is not runnable.
 
-Every published validation of these classifiers ran in curated research cohorts — ARDSNet
-trials, EARLI, VALID, LUNG SAFE — where variables were measured on protocol and missingness
-was low by design. Real screening does not look like that. That gap is what this project
-occupies, and `PRIOR_ART.md` documents how the question was narrowed twice as the
-literature closed off earlier framings.
+![Required trial size against classifier accuracy, and screening burden at the second hospital](figures/headline_enrichment.png)
+
+*Left: required patients per arm as classifier accuracy falls, against unstratified
+enrollment. Right: patients who must be screened to enrol the same trial at hospital B,
+using coverage-matched variables versus the blood-gas variables. Log scale. Prognostic
+enrichment only; endpoint is sepsis onset, not mortality.*
+
+![Variable coverage at the two hospital systems](figures/coverage_by_hospital.png)
+
+*Patient-level coverage for the variables that differ most between the two hospital
+systems. The difference runs in both directions — hospital B charts diastolic pressure and
+troponin more — which is why this is measurement practice rather than a data-quality defect
+at one site.*
 
 ## What the data is, and is not
 
-The primary cohort is the PhysioNet/CinC Challenge 2019 corpus: 40,336 ICU patients, one
-row per hour, drawn from two hospital systems. Two constraints are stated here rather than
-buried in a limitations section:
+- **Primary cohort:** PhysioNet/CinC Challenge 2019 — 40,336 ICU patients, hourly, from two
+  hospital systems. After inclusion criteria, **5,687 patients** (4,680 / 1,007).
+- **This is not an adjudicated ARDS cohort and is never called one.** No imaging, no PEEP,
+  no ventilation flag, so Berlin criteria cannot be approximated. It is hypoxemic
+  respiratory failure by an SpO₂/FiO₂ surrogate. A pre-commit hook enforces the wording.
+- **It has no mortality outcome.** The only label is sepsis onset. Mortality comes from the
+  eICU demo instead, with intervals reported wide.
+- The cohort is *selected*: requiring a recorded FiO₂ picks out older, longer-stay patients
+  with triple the sepsis rate (standardised differences 0.19–0.34).
 
-- **It carries no mortality outcome.** The only label is sepsis onset. Mortality is carried
-  separately by the eICU demo (~2,500 stays), with wide confidence intervals reported as
-  wide. No composite "severity outcome" is constructed and presented as though it were
-  mortality.
-- **It is not an adjudicated ARDS cohort, and is never called one.** There is no imaging,
-  no PEEP, and no ventilation flag on this data path, so Berlin criteria cannot be
-  approximated even loosely. The cohort is defined as hypoxemic respiratory failure by an
-  SpO₂/FiO₂ surrogate, and that is the term used in every figure, caption and variable
-  name. A pre-commit guard enforces it.
+## Results
 
-## Repository
+**Reproduction (C1).** A Gaussian mixture on set A recovers the published two-class
+structure: the hyperinflammatory-like class reproduces all four published directions —
+lower bicarbonate, higher creatinine, higher WBC, higher event rate — at **28.5%
+prevalence**, inside the 20–35% published cohorts report. BIC actually prefers k=4, which is
+the maximum of the pre-registered range with BIC still falling; that is a boundary solution
+and is reported as one.
 
-```
-config/          pre-registered parameters, frozen before results were seen
-shared/          assertions, portability checks, the external reference model
-layer0_scoping/  day-1 descriptive scoping — no models
-layer1_molecular/  transcriptomics + plasma proteomics
-layer2_clinical/   ICU trajectories, classification, transfer, ablation, enrichment
-tools/           pre-commit integrity guards
-tests/           synthetic fixtures; the guards are themselves tested
-```
+**Portability (C2).** The reference model needs cohort means at inference, so it cannot be
+deployed. Three replacements reproduce its labels from raw per-patient values: gradient
+boosting at **κ=0.852 (AUC 0.987)**, logistic at 0.723, and a depth-4 tree at 0.671 that
+reads as a bedside rule. All three pass two independent portability checks — static
+introspection for fitted scalers, and a functional probe requiring each patient's
+prediction to be identical alone and inside a batch.
 
-Three pieces carry more weight than their size suggests:
+**Generalization (C4).** Frozen set-A models applied to set B, and separately to the eICU
+demo across 186 hospitals under a different schema. **The mortality gradient replicates
+decisively**: 16.8% vs 36.6% hospital mortality between predicted classes, Fisher
+p<0.0001, non-overlapping intervals, 2.2×. Benchmarked against APACHE IVa — a published
+model whose predictions ship with the data and which I had no hand in fitting — it reaches
+AUC 0.634 against APACHE's 0.700. APACHE wins, as it should: it is purpose-built for
+mortality and an endotype label is not.
 
-- **`shared/no_population_stats.py`** — makes "this classifier is portable" an executable
-  claim rather than an assertion. A deployed screening model sees one patient at a time and
-  has no cohort to standardise against, so the check is functional: every patient's
-  prediction must be identical whether computed alone or inside a batch. A fitted scaler,
-  a cohort quantile, or median imputation all fail it.
-- **`shared/sinha2020.py`** — the published 3-variable classifier, implemented from its
-  printed equation and never refitted. It is a fixed external reference; the design depends
-  on it being external. Three open verification items are recorded in the module rather
-  than resolved by assumption.
-- **`tools/repo_guard.py`** — blocks commits containing row-level data, applying the word
-  "ARDS" to the unadjudicated cohort, or using discovery language about established
-  findings.
+![Mortality by predicted class in the eICU demo](figures/eicu_mortality.png)
 
-## Reproducing
+*Hospital mortality by predicted class in the eICU demo, 95% intervals. The model was
+trained on Challenge 2019 set A and frozen; eICU is a different dataset with a different
+schema across 186 hospitals.*
+
+**Deployment stress-test (C5).** Agreement falls from κ=0.869 on 12 variables to 0.699 at
+7 and 0.461 at 6, losing half its performance by 5 variables. Removal order is
+least-available-first, because a real deployment loses whatever the site does not measure.
+Missingness carries real but modest signal: the mask alone reaches AUC 0.546 against 0.641
+for the values, and adds nothing on top of them — so the stronger conjecture that
+missingness might *beat* the measurements is **not supported**.
+
+![Degradation as variables are removed](figures/degradation_curve.png)
+
+*Agreement with the reference assignment as variables are removed least-available-first.
+The cliff falls between 7 and 6 variables.*
+
+**Enrichment (C8).** Prognostic enrichment only — a power calculation, not a causal claim.
+Unstratified enrollment needs 2,196 per arm; perfect enrichment needs 1,573; at the
+classifier's real accuracy, 1,798. The screening-burden result above is where this becomes
+interesting.
+
+**Refinement loop (C6).** One documented cycle. The error taxonomy found real failure
+modes: the model is **inverted** on sparsely-measured patients (risk ratio 0.12 vs 1.71),
+and the signal is carried almost entirely by patients over 65 (1.78 vs 0.98). Two
+pre-specified rules fired. On a holdout scored exactly once, enrichment improved (RR
+1.62→2.02, crossing into significance) while discrimination did not (AUC 0.634→0.629) —
+the expected shape, since both refinements move the operating point and AUC is
+threshold-invariant. See [`results/refinement_log.md`](results/refinement_log.md).
+
+**Molecular layer (C7).** The MARS endotype labels are in GSE65682's metadata, so a
+supervised anchor was possible: elastic net at **87.5% out-of-fold accuracy**, per-class AUC
+0.975–0.988. Unsupervised clustering partially recovers those published labels without
+seeing them (**ARI 0.385**) — though PAC stays above 0.42 at every k, so no resolution gives
+a stable partition. In MGH Olink proteomics, day-0 class predicts acuity at every later
+timepoint with the effect *growing* over time (Cliff's delta −0.34 → −0.51), and **40.3% of
+patients change inflammatory status between day 0 and day 7** — these are states, not traits.
+
+## The result that constrains everything above
+
+On Challenge 2019 the classes look nearly worthless: AUC 0.54 for sepsis onset, and only
+**+0.017** over a modified SOFA — below the 0.02 threshold set before the result was seen.
+On eICU the same frozen model reaches AUC 0.63 for mortality with a decisive gradient.
+
+**The classes were not weak; the endpoint was wrong.** Sepsis onset is a 6-hour-shifted
+Sepsis-3 label these subphenotypes were never derived against. Both numbers appear here
+because either alone misleads.
+
+## Limitations
+
+- Not ARDS. Not adjudicated. No mortality in the primary cohort.
+- The severity comparison uses a **modified** SOFA — no vasopressors, no GCS, bilirubin
+  missing for 77% — which biases it in the endotype's favour and makes the null *stronger*.
+- Set B has **zero** patients with reference labels, so no native-reference comparison
+  exists there. 16 of 1,007 have the variables the reference model needs.
+- The published biomarker classifier **cannot be evaluated anywhere in this data**: IL-6 and
+  sTNFR1 are absent from EHR data entirely, Olink NPX is a relative scale rather than a
+  concentration, and the MGH clinical file has no bicarbonate. It is implemented correctly
+  and shown to be inapplicable, which is the finding.
+- eICU n=386 with 93 deaths. Thin.
+
+## What I chose not to do, and why
+
+**Predictive enrichment** — which patients *benefit* more — needs a treatment-effect
+estimate and is confounded by indication in observational data. A target-trial emulation
+with negative-control outcomes would be the appropriate design. Not attempted.
+
+**Drug–disease signature mapping** (LINCS) — out of scope, and would need the molecular
+layer to be stronger than it is.
+
+**Refitting the published classifier on NPX** — legitimate, but it would then be *my* model,
+and the entire design depends on the reference being external.
+
+## Reproduce it
 
 ```bash
 conda env create -f environment.yml && conda activate ards
-# then follow DOWNLOADS.md — data acquisition is manual and deliberate
-make check    # which sources are present
-make test     # unit tests + integrity guards
-make scope    # day 1 descriptive scoping
+# follow DOWNLOADS.md — acquisition is manual and deliberate
+make test    # 33 tests, including the integrity guards
+make scope   # descriptive scoping
 ```
 
-No data is committed. `data/` is gitignored before the first commit. The licences would
-permit redistribution; a repo bloated with re-hosted public data is worse engineering
-regardless, and the habit is the one worth having if restricted data is ever involved.
-
-These are real patients, de-identified but not anonymous. There are no individual patient
-walkthroughs and no per-patient trajectory plots anywhere in this repository.
-
-## Documents
-
-| File | What it holds |
-|---|---|
-| [`SPEC.md`](SPEC.md) | the full project specification (v1.4) |
-| [`PRIOR_ART.md`](PRIOR_ART.md) | what is already known, and the two theses it closed off |
-| [`DECISIONS.md`](DECISIONS.md) | every deviation from the spec, with its trigger |
-| [`DOWNLOADS.md`](DOWNLOADS.md) | manual data acquisition |
-| [`CITATIONS.md`](CITATIONS.md) | attribution — a licence condition for CC BY 4.0 sources |
+No data is committed. Every deviation from the original specification is logged with its
+trigger in [`DECISIONS.md`](DECISIONS.md) — including four cases where a bug in my own
+analysis produced a plausible result that a test or an assertion caught.
