@@ -1,0 +1,44 @@
+{
+  "n_subjects": 383,
+  "n_assays_after_lod": 1288,
+  "covid_positive": 305,
+  "covid_negative": 78,
+  "pac_by_k": {
+    "2": 0.5426,
+    "3": 0.5068,
+    "4": 0.4523,
+    "5": 0.3767
+  },
+  "k_selected": 5,
+  "k_ambiguous": false,
+  "inflammatory_prevalence": 0.2459,
+  "ari_cluster_vs_covid": 0.0528,
+  "chi2_p_cluster_vs_covid": 6.804871591241515e-18,
+  "host_response_supported": false,
+  "host_response_partial": true,
+  "switch_frac_d0_d7": 0.4028776978417266,
+  "pathway_comparison": [
+    {
+      "set": "p38_axis",
+      "n_assays": 18,
+      "cliffs_delta": 0.6757,
+      "p": 1.542e-18
+    },
+    {
+      "set": "generic_inflammation_disjoint",
+      "n_assays": 10,
+      "cliffs_delta": 0.6106,
+      "p": 2.035e-15
+    },
+    {
+      "set": "interferon_negative_control",
+      "n_assays": 4,
+      "cliffs_delta": 0.0021,
+      "p": 0.9789
+    }
+  ],
+  "p38_margin_over_disjoint_generic": 0.0651,
+  "p38_interpretation": "consistent with, but not evidence of, p38-axis dominance \u2014 the margin over a disjoint generic inflammation set is small and both measure downstream cytokine output",
+  "rank_surrogate_concordance": 0.8163934426229508,
+  "caveats": "COVID-era cohort, so framed as acute hypoxemic respiratory failure, not ARDS (\u00a76.7). NPX is relative, so no published fixed-coefficient classifier can be evaluated (D3), and bicarbonate is absent entirely (D9)."
+}

@@ -1,0 +1,4 @@
+set,n_assays,cliffs_delta,p
+p38_axis,18,0.6757,1.542e-18
+generic_inflammation_disjoint,10,0.6106,2.035e-15
+interferon_negative_control,4,0.0021,0.9789
