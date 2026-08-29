@@ -3,5 +3,5 @@ step,label,n,excluded,reason
 1,age >= 18,40314,22.0,paediatric or missing age
 2,ICULOS >= 24h,30646,9668.0,short record
 3,has >=1 hour with FiO2 AND O2Sat,14471,16175.0,S/F not computable
-4,after O2Sat<97 and hour<=168 at candidate hours,7454,7017.0,oximeter saturated or too late
-5,S/F <= 235 (primary),5689,1765.0,
+4,after O2Sat<97 and hour<=168 at candidate hours,7451,7020.0,oximeter saturated or too late
+5,S/F <= 235 (primary),5687,1764.0,

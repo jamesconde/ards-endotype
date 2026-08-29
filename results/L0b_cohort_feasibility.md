@@ -4,7 +4,7 @@
 
 ## Verdict
 
-**PRIMARY THRESHOLD VIABLE (5689 patients)**
+**PRIMARY THRESHOLD VIABLE (5687 patients)**
 
 ## FiO2 scale and validity
 
@@ -20,17 +20,17 @@ But the raw range is impossible: room air is 0.209 and pure oxygen is 1.0. **395
 |      1 | age >= 18                                       | 40314 |         22 | paediatric or missing age      |
 |      2 | ICULOS >= 24h                                   | 30646 |       9668 | short record                   |
 |      3 | has >=1 hour with FiO2 AND O2Sat                | 14471 |      16175 | S/F not computable             |
-|      4 | after O2Sat<97 and hour<=168 at candidate hours |  7454 |       7017 | oximeter saturated or too late |
-|      5 | S/F <= 235 (primary)                            |  5689 |       1765 |                                |
+|      4 | after O2Sat<97 and hour<=168 at candidate hours |  7451 |       7020 | oximeter saturated or too late |
+|      5 | S/F <= 235 (primary)                            |  5687 |       1764 |                                |
 
 
-At the relaxed threshold (S/F <= 315, a surrogate for P/F <= 300): **7013** patients.
+At the relaxed threshold (S/F <= 315, a surrogate for P/F <= 300): **7010** patients.
 
 ## Minimum S/F per patient, among those where it is computable
 
 | statistic | value |
 |---|---|
-| count | 7454.0 |
+| count | 7451.0 |
 | mean | 183.3 |
 | std | 80.1 |
 | min | 24.0 |
@@ -46,8 +46,8 @@ At the relaxed threshold (S/F <= 315, a surrogate for P/F <= 300): **7013** pati
 
 | Variable | In cohort | Excluded | Std. diff |
 |---|---|---|---|
-| age | 64.699 | 61.591 | 0.197 |
-| n_hours | 52.259 | 43.379 | 0.329 |
+| age | 64.698 | 61.592 | 0.197 |
+| n_hours | 52.261 | 43.379 | 0.329 |
 | sepsis_any | 0.154 | 0.039 | 0.397 |
 
 

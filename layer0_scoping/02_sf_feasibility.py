@@ -90,7 +90,9 @@ def main() -> int:
 
         if both.any():
             sub = df.loc[both].copy()
-            sub["hour"] = sub.index + 1
+            # ICULOS, never row position. ICULOS is hours since ICU admission and
+            # 22% of patients start at hour 2 or later, so the two differ (D14).
+            sub["hour"] = sub["ICULOS"]
             # Exclusion applied at the candidate hour, not to the patient (§4.3).
             ok = (sub["O2Sat"] < exc["o2sat_saturation_cutoff"]) & \
                  (sub["hour"] <= exc["max_qualifying_hour"])
