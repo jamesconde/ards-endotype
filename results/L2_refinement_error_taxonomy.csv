@@ -1,0 +1,5 @@
+stratum,n,positive_rate,event_pos,event_neg,risk_ratio
+natively_sparse,72,0.3472,0.04,0.3404,0.118
+natively_complete,573,0.3613,0.2754,0.1612,1.708
+younger_than_65,317,0.3596,0.1842,0.1872,0.984
+65_and_older,328,0.3598,0.3136,0.1762,1.78

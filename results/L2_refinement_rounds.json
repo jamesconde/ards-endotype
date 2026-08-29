@@ -1,0 +1,139 @@
+{
+  "rules_prespecified": [
+    {
+      "id": "R1",
+      "trigger": "predicted-positive prevalence differs from set A by more than 5 points",
+      "action": "recalibrate the decision threshold so predicted prevalence on B matches the prevalence the model produced on A"
+    },
+    {
+      "id": "R2",
+      "trigger": "enrichment (risk ratio) differs by more than 0.3 between natively-sparse and natively-complete patients",
+      "action": "add the count of measured variables as an explicit feature, so the model can condition on care intensity rather than confounding it with physiology"
+    },
+    {
+      "id": "R3",
+      "trigger": "any input feature is available for less than 50% of set B",
+      "action": "drop that feature and retrain, since it cannot be relied on at the deployment site"
+    }
+  ],
+  "decisions": [
+    {
+      "rule": "R1",
+      "fired": true,
+      "observation": "predicted-positive prevalence 36.0% on B vs 27.0% on A, gap 9.0%",
+      "action": "threshold moved 0.5 -> 0.845 to match A's prevalence"
+    },
+    {
+      "rule": "R2",
+      "fired": true,
+      "observation": "risk ratio 0.118 in sparse vs 1.708 in complete patients, gap 1.59",
+      "action": "added measured-variable count as an explicit feature"
+    },
+    {
+      "rule": "R3",
+      "fired": false,
+      "observation": "all features available in >=50% of set B"
+    }
+  ],
+  "rounds": [
+    {
+      "round_id": 1,
+      "description": "baseline: transferable features, threshold 0.5",
+      "features": [
+        "HR_mean",
+        "O2Sat_mean",
+        "Resp_mean",
+        "MAP_mean",
+        "Temp_mean",
+        "SBP_mean",
+        "Glucose_mean",
+        "Potassium_mean",
+        "Creatinine_mean",
+        "BUN_mean",
+        "WBC_mean",
+        "Platelets_mean",
+        "Hgb_mean",
+        "Hct_mean"
+      ],
+      "threshold": 0.5,
+      "trained_on": "set A",
+      "evaluated_on": "set B (diagnosis slice)",
+      "n_train": 3198,
+      "n_eval": 645,
+      "event_rate_positive": 0.25,
+      "event_rate_negative": 0.1816,
+      "risk_ratio": 1.377,
+      "auc": 0.5739,
+      "fisher_p": 0.0428,
+      "triggering_observation": "",
+      "refinement_applied": "none (baseline round)"
+    },
+    {
+      "round_id": 1,
+      "description": "baseline scored on final holdout",
+      "features": [
+        "HR_mean",
+        "O2Sat_mean",
+        "Resp_mean",
+        "MAP_mean",
+        "Temp_mean",
+        "SBP_mean",
+        "Glucose_mean",
+        "Potassium_mean",
+        "Creatinine_mean",
+        "BUN_mean",
+        "WBC_mean",
+        "Platelets_mean",
+        "Hgb_mean",
+        "Hct_mean"
+      ],
+      "threshold": 0.5,
+      "trained_on": "set A",
+      "evaluated_on": "set B (FINAL HOLDOUT)",
+      "n_train": 3198,
+      "n_eval": 185,
+      "event_rate_positive": 0.2281,
+      "event_rate_negative": 0.1406,
+      "risk_ratio": 1.622,
+      "auc": 0.6336,
+      "fisher_p": 0.1997,
+      "triggering_observation": "",
+      "refinement_applied": "none (baseline round)"
+    },
+    {
+      "round_id": 2,
+      "description": "refined per pre-specified rules",
+      "features": [
+        "HR_mean",
+        "O2Sat_mean",
+        "Resp_mean",
+        "MAP_mean",
+        "Temp_mean",
+        "SBP_mean",
+        "Glucose_mean",
+        "Potassium_mean",
+        "Creatinine_mean",
+        "BUN_mean",
+        "WBC_mean",
+        "Platelets_mean",
+        "Hgb_mean",
+        "Hct_mean",
+        "n_measured_feat"
+      ],
+      "threshold": 0.8449168135100179,
+      "trained_on": "set A",
+      "evaluated_on": "set B (FINAL HOLDOUT)",
+      "n_train": 3198,
+      "n_eval": 185,
+      "event_rate_positive": 0.2727,
+      "event_rate_negative": 0.1348,
+      "risk_ratio": 2.024,
+      "auc": 0.629,
+      "fisher_p": 0.0393,
+      "triggering_observation": "predicted-positive prevalence 36.0% on B vs 27.0% on A, gap 9.0%; risk ratio 0.118 in sparse vs 1.708 in complete patients, gap 1.59",
+      "refinement_applied": "threshold moved 0.5 -> 0.845 to match A's prevalence; added measured-variable count as an explicit feature"
+    }
+  ],
+  "delta_risk_ratio": 0.402,
+  "delta_auc": -0.0046
+}
