@@ -1,0 +1,144 @@
+{
+  "target": "is_hyper_like_k2",
+  "n": 3275,
+  "class_balance": 0.2846,
+  "features": [
+    "HCO3_mean",
+    "Creatinine_mean",
+    "WBC_mean",
+    "Platelets_mean",
+    "BUN_mean",
+    "Glucose_mean",
+    "pH_mean",
+    "MAP_mean",
+    "HR_mean",
+    "Resp_mean",
+    "Temp_mean",
+    "sf_ratio_min"
+  ],
+  "feature_availability": {
+    "HCO3_mean": 0.725,
+    "Creatinine_mean": 0.8799,
+    "WBC_mean": 0.8686,
+    "Platelets_mean": 0.8685,
+    "BUN_mean": 0.8829,
+    "Glucose_mean": 0.9277,
+    "pH_mean": 0.8504,
+    "MAP_mean": 0.9984,
+    "HR_mean": 0.9998,
+    "Resp_mean": 0.9937,
+    "Temp_mean": 0.9594,
+    "sf_ratio_min": 1.0
+  },
+  "results": [
+    {
+      "model": "logistic",
+      "n": 3275,
+      "kappa": 0.7227,
+      "auc": 0.9324,
+      "brier": 0.0822,
+      "accuracy": 0.8919,
+      "confusion_matrix": [
+        [
+          2232,
+          111
+        ],
+        [
+          243,
+          689
+        ]
+      ],
+      "portable": true
+    },
+    {
+      "model": "tree",
+      "n": 3275,
+      "kappa": 0.6711,
+      "auc": 0.8714,
+      "brier": 0.0932,
+      "accuracy": 0.8745,
+      "confusion_matrix": [
+        [
+          2235,
+          108
+        ],
+        [
+          303,
+          629
+        ]
+      ],
+      "portable": true
+    },
+    {
+      "model": "gbm",
+      "n": 3275,
+      "kappa": 0.852,
+      "auc": 0.9872,
+      "brier": 0.041,
+      "accuracy": 0.9414,
+      "confusion_matrix": [
+        [
+          2289,
+          54
+        ],
+        [
+          138,
+          794
+        ]
+      ],
+      "portable": true
+    }
+  ],
+  "parsimony_smallest_within_0.02": 4,
+  "availability_by_hospital": {
+    "HCO3_mean": {
+      "A": 0.8767,
+      "B": 0.0199
+    },
+    "Creatinine_mean": {
+      "A": 0.8801,
+      "B": 0.8788
+    },
+    "WBC_mean": {
+      "A": 0.8722,
+      "B": 0.852
+    },
+    "Platelets_mean": {
+      "A": 0.8718,
+      "B": 0.853
+    },
+    "BUN_mean": {
+      "A": 0.8838,
+      "B": 0.8788
+    },
+    "Glucose_mean": {
+      "A": 0.9182,
+      "B": 0.9722
+    },
+    "pH_mean": {
+      "A": 0.8244,
+      "B": 0.9712
+    },
+    "MAP_mean": {
+      "A": 0.9985,
+      "B": 0.998
+    },
+    "HR_mean": {
+      "A": 1.0,
+      "B": 0.999
+    },
+    "Resp_mean": {
+      "A": 0.9985,
+      "B": 0.9712
+    },
+    "Temp_mean": {
+      "A": 0.9564,
+      "B": 0.9732
+    },
+    "sf_ratio_min": {
+      "A": 1.0,
+      "B": 1.0
+    }
+  },
+  "portability": "every model passed both static introspection and the batch-invariance probe: no cohort statistic appears in any inference path"
+}

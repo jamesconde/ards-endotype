@@ -1,0 +1,13 @@
+n_features,added,kappa,added_availability,avail_setA,avail_setB,transferable,min_availability_in_set,min_avail_setB_in_set
+1,BUN_mean,0.5583,0.8829,0.8838,0.8788,True,0.8829,0.8788
+2,HCO3_mean,0.6115,0.725,0.8767,0.0199,False,0.725,0.0199
+3,Creatinine_mean,0.6623,0.8799,0.8801,0.8788,True,0.725,0.0199
+4,pH_mean,0.6935,0.8504,0.8244,0.9712,False,0.725,0.0199
+5,WBC_mean,0.6935,0.8686,0.8722,0.852,True,0.725,0.0199
+6,Platelets_mean,0.6935,0.8685,0.8718,0.853,True,0.725,0.0199
+7,Resp_mean,0.6935,0.9937,0.9985,0.9712,True,0.725,0.0199
+8,sf_ratio_min,0.6935,1.0,1.0,1.0,True,0.725,0.0199
+9,HR_mean,0.6923,0.9998,1.0,0.999,True,0.725,0.0199
+10,MAP_mean,0.6823,0.9984,0.9985,0.998,True,0.725,0.0199
+11,Temp_mean,0.6711,0.9594,0.9564,0.9732,True,0.725,0.0199
+12,Glucose_mean,0.6711,0.9277,0.9182,0.9722,True,0.725,0.0199
