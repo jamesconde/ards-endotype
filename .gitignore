@@ -49,3 +49,9 @@ results/L0_scoping.json
 # agent working directories (never committed)
 scratch_proteomics/
 scratch_*/
+
+# Discord bridge secrets — NEVER commit
+secrets/
+*_token.txt
+*webhook*.txt
+discord_inbox.txt

@@ -52,6 +52,21 @@ DISCOVERY_PATTERNS = [
      "discovery framing (I1)"),
 ]
 
+# --- Guard 4: secrets ---------------------------------------------------------
+# The Discord bridge puts a bot token and a webhook URL on disk. Both are
+# credentials: anyone with the webhook can post to the channel, and anyone with
+# the token controls the bot. .gitignore covers secrets/, but a gitignore is one
+# `git add -f` away from being bypassed, so the content is matched too.
+SECRET_PATTERNS = [
+    (re.compile(r"https://discord(?:app)?\.com/api/webhooks/\d+/[\w-]+"),
+     "Discord webhook URL — a credential, never commit it"),
+    (re.compile(r"\b[MNO][A-Za-z\d_-]{23,27}\.[A-Za-z\d_-]{6}\.[A-Za-z\d_-]{27,}\b"),
+     "Discord bot token"),
+    (re.compile(r"\b(?:ghp|gho|ghs|ghu)_[A-Za-z0-9]{36}\b"), "GitHub token"),
+    (re.compile(r"\bsk-(?:ant-)?[A-Za-z0-9_-]{20,}\b"), "API key"),
+    (re.compile(r"AKIA[0-9A-Z]{16}"), "AWS access key id"),
+]
+
 # Files exempt from the vocabulary guards: they quote the spec verbatim.
 VOCAB_EXEMPT = {"SPEC.md", "PRIOR_ART.md", "tools/repo_guard.py", "CITATIONS.md"}
 
@@ -93,6 +108,14 @@ def check_vocabulary(rel: str, text: str, fail: list[str]) -> None:
             )
 
 
+def check_secrets(rel: str, text: str, fail: list[str]) -> None:
+    """Credentials must never be committed, exempt file or not."""
+    for i, line in enumerate(text.splitlines(), 1):
+        for pat, why in SECRET_PATTERNS:
+            if pat.search(line):
+                fail.append(f"{rel}:{i}: {why}. Move it to secrets/ and keep it gitignored.")
+
+
 def check_discovery(rel: str, text: str, fail: list[str]) -> None:
     for i, line in enumerate(text.splitlines(), 1):
         for pat, why in DISCOVERY_PATTERNS:
@@ -118,10 +141,12 @@ def main() -> int:
         except ValueError:
             rel = str(p)
         check_data(p, rel, fail)
-        if p.suffix in TEXT_SUFFIXES and rel not in VOCAB_EXEMPT and p.exists():
+        if p.suffix in TEXT_SUFFIXES and p.exists():
             text = p.read_text(errors="replace")
-            check_vocabulary(rel, text, fail)
-            check_discovery(rel, text, fail)
+            check_secrets(rel, text, fail)          # no exemptions for credentials
+            if rel not in VOCAB_EXEMPT:
+                check_vocabulary(rel, text, fail)
+                check_discovery(rel, text, fail)
 
     if fail:
         print("repo_guard: BLOCKED\n", file=sys.stderr)
