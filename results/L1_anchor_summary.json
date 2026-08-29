@@ -1,0 +1,32 @@
+{
+  "n_samples": 479,
+  "n_probes_used": 2000,
+  "mars_class_counts": {
+    "Mars2": 176,
+    "Mars1": 132,
+    "Mars3": 118,
+    "Mars4": 53
+  },
+  "anchor_oof_accuracy": 0.8747,
+  "anchor_per_class_auc": {
+    "Mars1": 0.9878,
+    "Mars2": 0.98,
+    "Mars3": 0.9746,
+    "Mars4": 0.9746
+  },
+  "pac_by_k": {
+    "2": 0.5625,
+    "3": 0.6059,
+    "4": 0.5447,
+    "5": 0.4901,
+    "6": 0.4242
+  },
+  "k_selected": 6,
+  "k_selection_ambiguous": false,
+  "k_tied": [
+    6
+  ],
+  "pac_caveat": "PAC measures stability, not correctness, and is biased toward smaller k. The ARI against published MARS labels is the external cross-check.",
+  "ari_vs_published_mars": 0.385,
+  "interpretation": "Recovering published MARS labels without using them is a reproduction of Scicluna et al. 2017, not a discovery."
+}

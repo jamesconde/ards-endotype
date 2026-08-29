@@ -1,0 +1,59 @@
+{
+  "GSE65682": {
+    "present": true,
+    "role": "MARS \u2014 discovery + supervised anchor",
+    "n_probes": 24646,
+    "n_samples": 802,
+    "already_log2": true,
+    "max_value": 13.536,
+    "label_search": {
+      "Sample_characteristics_ch1[4]": [
+        "endotype_cohort: NA",
+        "endotype_cohort: discovery",
+        "endotype_cohort: validation"
+      ],
+      "Sample_characteristics_ch1[5]": [
+        "endotype_class: Mars1",
+        "endotype_class: Mars2",
+        "endotype_class: Mars3",
+        "endotype_class: Mars4",
+        "endotype_class: NA"
+      ]
+    },
+    "mars_labels_present": true,
+    "metadata_fields": [
+      "Sample_characteristics_ch1",
+      "Sample_geo_accession",
+      "Sample_source_name_ch1",
+      "Sample_title"
+    ]
+  },
+  "GSE32707": {
+    "present": true,
+    "role": "Dolinay \u2014 transfer cohort 1 (has a day 0/7 axis)",
+    "n_probes": 47220,
+    "n_samples": 144,
+    "already_log2": false,
+    "max_value": 40190.6,
+    "metadata_fields": [
+      "Sample_characteristics_ch1",
+      "Sample_geo_accession",
+      "Sample_source_name_ch1",
+      "Sample_title"
+    ]
+  },
+  "GSE66890": {
+    "present": true,
+    "role": "Kangelaris \u2014 transfer cohort 2",
+    "n_probes": 24403,
+    "n_samples": 62,
+    "already_log2": true,
+    "max_value": 13.574,
+    "metadata_fields": [
+      "Sample_characteristics_ch1",
+      "Sample_geo_accession",
+      "Sample_source_name_ch1",
+      "Sample_title"
+    ]
+  }
+}
