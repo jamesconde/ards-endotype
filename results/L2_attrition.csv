@@ -1,0 +1,6 @@
+step,label,A,B,total,excluded
+0,all ICU patients,20336,20000,40336,
+1,age >= 18,20336,19978,40314,22.0
+2,ICULOS >= 24h,15837,14809,30646,9668.0
+3,">=1 candidate hour (valid FiO2 + O2Sat<97, hour<=168)",6470,2078,8548,22098.0
+4,S/F <= 235  [COHORT],4680,1007,5687,2861.0

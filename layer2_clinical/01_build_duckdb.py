@@ -35,6 +35,29 @@ EXPECTED_PATIENTS = 40336
 EXPECTED_A = 20336
 EXPECTED_B = 20000
 
+# The 41 columns, typed explicitly rather than inferred.
+#
+# Why this is not optional: DuckDB infers types from a sample of leading rows,
+# and the sparsest columns (Lactate, PTT, Fibrinogen, TroponinI,
+# Bilirubin_direct, EtCO2, DBP) are so empty that the sample contains only NaN.
+# It then falls back to VARCHAR, and every later AVG() over them fails — or
+# worse, a comparison silently does string ordering. The missingness that this
+# project studies is itself the cause of the typing bug, which is a neat
+# demonstration of why §4.4 insists the mask is first-class.
+#
+# Declaring the schema also turns a changed or reordered header into a loud
+# failure instead of a silent misalignment.
+CHALLENGE_COLUMNS = [
+    "HR", "O2Sat", "Temp", "SBP", "MAP", "DBP", "Resp", "EtCO2",
+    "BaseExcess", "HCO3", "FiO2", "pH", "PaCO2", "SaO2", "AST", "BUN",
+    "Alkalinephos", "Calcium", "Chloride", "Creatinine", "Bilirubin_direct",
+    "Glucose", "Lactate", "Magnesium", "Phosphate", "Potassium",
+    "Bilirubin_total", "TroponinI", "Hct", "Hgb", "PTT", "WBC", "Fibrinogen",
+    "Platelets", "Age", "Gender", "Unit1", "Unit2", "HospAdmTime", "ICULOS",
+    "SepsisLabel",
+]
+COLUMN_SPEC = "{" + ", ".join(f"'{c}': 'DOUBLE'" for c in CHALLENGE_COLUMNS) + "}"
+
 
 def build_hourly(con: duckdb.DuckDBPyConnection) -> None:
     """One row per patient-hour, with hospital_system derived from the path.
@@ -69,8 +92,8 @@ def build_hourly(con: duckdb.DuckDBPyConnection) -> None:
                 CAST(regexp_extract(filename, 'p(\\d+)\\.psv', 1) AS INTEGER) AS patient_id,
                 '{setname}' AS hospital_system,
                 * EXCLUDE (filename)
-            FROM read_csv_auto('{g}', delim='|', nullstr='NaN',
-                               filename=true, header=true)
+            FROM read_csv('{g}', delim='|', nullstr='NaN', header=true,
+                          filename=true, columns={COLUMN_SPEC})
         """)
         log.info("  loaded set %s", setname)
 

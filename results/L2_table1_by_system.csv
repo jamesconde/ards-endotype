@@ -1,0 +1,3 @@
+hospital_system,n,age_mean,male_frac,iculos_mean,t0_mean,min_sf_mean,sepsis_rate
+A,4680,65.2,0.602,50.7,17.7,150.1,0.1389
+B,1007,62.5,0.615,59.7,19.0,154.0,0.2224
