@@ -1,0 +1,47 @@
+{
+  "fit_on": "A",
+  "n_fit": 3275,
+  "n_complete_cases": 3291,
+  "n_cohort": 5687,
+  "features": [
+    "HCO3_mean",
+    "Creatinine_mean",
+    "WBC_mean",
+    "Platelets_mean",
+    "BUN_mean",
+    "Glucose_mean",
+    "pH_mean",
+    "MAP_mean",
+    "HR_mean",
+    "Resp_mean",
+    "Temp_mean",
+    "sf_ratio_min"
+  ],
+  "k_selected": 4,
+  "class_sizes": {
+    "0": 1340,
+    "1": 449,
+    "2": 712,
+    "3": 774
+  },
+  "hyper_like_class": 1,
+  "published_directions_reproduced": {
+    "HCO3 lower": true,
+    "Creatinine higher": true,
+    "sepsis rate higher": true,
+    "WBC higher": true
+  },
+  "median_posterior": 0.9457709283644572,
+  "k_at_range_boundary": true,
+  "k2_comparison": {
+    "hyper_like_class": 0,
+    "hyper_like_prevalence": 0.2846,
+    "published_directions_reproduced": {
+      "HCO3 lower": true,
+      "Creatinine higher": true,
+      "sepsis rate higher": true,
+      "WBC higher": true
+    }
+  },
+  "note": "Reproduction of established subphenotype structure, not a discovery. Cohort-standardised and therefore not deployable by construction \u2014 see \u00a74.5a and DECISIONS.md."
+}

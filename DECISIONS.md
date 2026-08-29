@@ -145,6 +145,49 @@ strengthens this project's relevance; the critique is a ready-made limitations p
 
 ---
 
+## D15 — The reference model cannot be built in set B at all (day 2)
+
+**Trigger:** the §4.5a mixture needs complete cases on its 12 features. Of 5,687 cohort
+patients, 3,291 (57.9%) are complete — but **99.5% of them are set A**. Only 16 set B
+patients survive, out of 1,007 in the cohort.
+
+**This is D12 arriving at its logical conclusion.** Set B does not chart bicarbonate (2.1%)
+or chloride (8.1%), so a model requiring them has almost no one to score there. The
+reference assignment is therefore a **set A object**, and set B cannot produce a native
+reference assignment to compare against — which removes one of the two things §4.5d wanted
+to measure ("agreement of the portable classifier with a set-B-native reference").
+
+**Decision:** the transfer experiment runs on the `transferable_features` set frozen in
+D12, which excludes the blood-gas block precisely because of this. The reference
+assignment used for training labels stays as fitted on set A. What §4.5d can report is
+agreement between a frozen classifier's set-B predictions and its set-A-derived decision
+rule, plus outcome association in set B — not agreement against a set-B-native mixture,
+which does not exist and cannot be made to exist.
+
+**Report the number itself.** "16 of 1,007 patients at the second hospital have the
+variables the reference model needs" is a cleaner statement of the deployment problem than
+any degradation curve.
+
+---
+
+## D14 — ICULOS is hours since admission, not row position (day 2)
+
+**Trigger:** an ingest checkpoint fired on 8,793 of 40,336 patients.
+
+**Diagnosis:** ICULOS is perfectly contiguous for every patient — no gaps, no duplicates —
+but 22% of patients **start at hour 2 or later**, because their record begins some hours
+after ICU admission. ICULOS is hours-since-admission; row position is not.
+
+**Decision:** every time-window operation uses ICULOS. `02_sf_feasibility.py` had used row
+position and is corrected.
+
+**Impact was 2 patients out of 5,689** — negligible, and recorded anyway, because it is
+exactly the class of error that shifts a variable amount per patient, produces entirely
+plausible output, and never raises anything. The checkpoint that caught it was written
+before the data was seen.
+
+---
+
 ## D13 — C2's external anchor comes from APACHE IVa and a modified SOFA, not from Sinha (day 1)
 
 **Trigger:** C2 requires "a published classifier implemented from its equation and applied
