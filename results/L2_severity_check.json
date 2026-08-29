@@ -1,0 +1,15 @@
+{
+  "severity_score": "modified SOFA (5 of 6 systems; cardiovascular capped at 1, CNS omitted)",
+  "max_attainable": 17,
+  "mean_score": 5.622,
+  "auc_sepsis_endotype_alone": 0.5436,
+  "auc_sepsis_severity_alone": 0.5398,
+  "auc_sepsis_both": 0.5563,
+  "endotype_gain_over_severity": 0.0165,
+  "gain_exceeds_0.02_threshold": false,
+  "ari_original_vs_severity_adjusted": 0.3324,
+  "all_aucs_near_chance": true,
+  "liver_component_missing_frac": 0.7716,
+  "caveat": "The severity score is deliberately weakened by missing vasopressors and GCS, and bilirubin is absent for most patients so the liver component scores 0 by default. All of that biases the comparison in ENDOTYPE's favour, so the null is stronger than it appears, not weaker.",
+  "second_caveat": "Every AUC here is near 0.5. Neither endotype nor severity predicts sepsis onset well, so this compares two weak predictors. The limiting factor is the endpoint \u2014 a 6h-shifted Sepsis-3 label, not an outcome these subphenotypes were built to predict. Report both halves or the finding is misleading."
+}
