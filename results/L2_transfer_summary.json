@@ -1,0 +1,110 @@
+{
+  "design": "fit on set A, frozen, applied to set B; no refitting on B",
+  "what_cannot_be_measured": "agreement against a set-B-native reference assignment \u2014 set B has 0 of 1007 patients with the variables the reference model needs (D15), so no such reference exists",
+  "feature_sets": {
+    "restricted": [
+      "HR_mean",
+      "O2Sat_mean",
+      "Resp_mean",
+      "MAP_mean",
+      "Temp_mean",
+      "SBP_mean",
+      "Glucose_mean",
+      "Potassium_mean",
+      "Creatinine_mean",
+      "BUN_mean",
+      "WBC_mean",
+      "Platelets_mean",
+      "Hgb_mean",
+      "Hct_mean"
+    ],
+    "naive": [
+      "HCO3_mean",
+      "Creatinine_mean",
+      "WBC_mean",
+      "Platelets_mean",
+      "BUN_mean",
+      "Glucose_mean",
+      "pH_mean",
+      "MAP_mean",
+      "HR_mean",
+      "Resp_mean",
+      "Temp_mean",
+      "sf_ratio_min"
+    ]
+  },
+  "results": [
+    {
+      "feature_set": "restricted",
+      "n_features": 14,
+      "n_train_A": 3198,
+      "scoreable_A": 3736,
+      "scoreable_B": 830,
+      "frac_scoreable_A": 0.7983,
+      "frac_scoreable_B": 0.8242,
+      "prevalence_A": 0.2789,
+      "prevalence_B": 0.3518,
+      "unscoreable": false,
+      "auc_sepsis_A": 0.5483,
+      "auc_sepsis_B": 0.5353,
+      "rr_A": 1.473,
+      "rr_B": 1.273,
+      "p_A": 0.0,
+      "p_B": 0.1003
+    },
+    {
+      "feature_set": "naive",
+      "n_features": 12,
+      "n_train_A": 3275,
+      "scoreable_A": 3275,
+      "scoreable_B": 16,
+      "frac_scoreable_A": 0.6998,
+      "frac_scoreable_B": 0.0159,
+      "prevalence_A": null,
+      "prevalence_B": null,
+      "unscoreable": true
+    }
+  ],
+  "outcome_gradient": [
+    {
+      "site": "A [restricted]",
+      "n": 3736,
+      "class0_n": 2694,
+      "class0_sepsis": 0.1147,
+      "class0_ci": [
+        0.1029,
+        0.1273
+      ],
+      "class1_n": 1042,
+      "class1_sepsis": 0.1689,
+      "class1_ci": [
+        0.1466,
+        0.1931
+      ],
+      "risk_ratio": 1.473,
+      "auc_sepsis": 0.5483,
+      "fisher_p": 0.0,
+      "significant_at_0.05": true
+    },
+    {
+      "site": "B [restricted]",
+      "n": 830,
+      "class0_n": 538,
+      "class0_sepsis": 0.1803,
+      "class0_ci": [
+        0.1487,
+        0.2154
+      ],
+      "class1_n": 292,
+      "class1_sepsis": 0.2295,
+      "class1_ci": [
+        0.1825,
+        0.282
+      ],
+      "risk_ratio": 1.273,
+      "auc_sepsis": 0.5353,
+      "fisher_p": 0.1003,
+      "significant_at_0.05": false
+    }
+  ]
+}

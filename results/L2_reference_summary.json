@@ -19,19 +19,19 @@
   ],
   "k_selected": 4,
   "class_sizes": {
-    "0": 1340,
-    "1": 449,
-    "2": 712,
-    "3": 774
+    "0": 767,
+    "1": 685,
+    "2": 1371,
+    "3": 452
   },
-  "hyper_like_class": 1,
+  "hyper_like_class": 3,
   "published_directions_reproduced": {
     "HCO3 lower": true,
     "Creatinine higher": true,
     "sepsis rate higher": true,
     "WBC higher": true
   },
-  "median_posterior": 0.9457709283644572,
+  "median_posterior": 0.9456153705220793,
   "k_at_range_boundary": true,
   "k2_comparison": {
     "hyper_like_class": 0,

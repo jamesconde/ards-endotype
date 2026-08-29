@@ -1,0 +1,3 @@
+site,n,class0_n,class0_sepsis,class0_ci,class1_n,class1_sepsis,class1_ci,risk_ratio,auc_sepsis,fisher_p,significant_at_0.05
+A [restricted],3736,2694,0.1147,"[0.1029, 0.1273]",1042,0.1689,"[0.1466, 0.1931]",1.473,0.5483,0.0,True
+B [restricted],830,538,0.1803,"[0.1487, 0.2154]",292,0.2295,"[0.1825, 0.282]",1.273,0.5353,0.1003,False

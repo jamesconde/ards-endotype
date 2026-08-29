@@ -141,7 +141,14 @@ def main() -> int:
 
     p = yaml.safe_load((paths.CONFIG / "cohort_params.yaml").read_text())
     idx = p["index_time"]
-    labs = p["static_features"]["labs"]
+    # Extract the union of the §4.4 static list and the D12 transferable list.
+    # This is not a change to the analysis plan: both lists were frozen before
+    # any model was fitted, and the transferable set needs Potassium, Hgb and
+    # Hct, which the §4.4 list happens not to contain. Extracting a superset
+    # keeps one feature table serving both experiments.
+    labs = list(dict.fromkeys(
+        p["static_features"]["labs"] + p["transferable_features"]["labs"]))
+    log.info("extracting %d labs (union of §4.4 static and D12 transferable)", len(labs))
     con = connect()
 
     n_cohort = con.execute("SELECT COUNT(*) FROM cohort").fetchone()[0]
