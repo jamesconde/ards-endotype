@@ -1,0 +1,5 @@
+scenario,frac_scoreable,n_total_enrolled,patients_to_screen,screen_multiplier_vs_full_coverage
+restricted_setB,0.8242,3596,12494,1.21
+naive_setB,0.0159,3596,647654,62.89
+restricted_setA,0.7983,3596,12900,1.25
+naive_setA,0.6998,3596,14715,1.43
