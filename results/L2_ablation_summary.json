@@ -1,0 +1,66 @@
+{
+  "removal_order_rationale": "least-available-first, not least-important-first",
+  "availability": {
+    "HCO3_mean": 0.725,
+    "Creatinine_mean": 0.8799,
+    "WBC_mean": 0.8686,
+    "Platelets_mean": 0.8685,
+    "BUN_mean": 0.8829,
+    "Glucose_mean": 0.9277,
+    "pH_mean": 0.8504,
+    "MAP_mean": 0.9984,
+    "HR_mean": 0.9998,
+    "Resp_mean": 0.9937,
+    "Temp_mean": 0.9594,
+    "sf_ratio_min": 1.0
+  },
+  "full_feature_kappa": 0.8689,
+  "n_features_at_half_kappa": 5,
+  "availability_within_labelled_subset": {
+    "HCO3_mean": 1.0,
+    "Creatinine_mean": 1.0,
+    "WBC_mean": 1.0,
+    "Platelets_mean": 1.0,
+    "BUN_mean": 1.0,
+    "Glucose_mean": 1.0,
+    "pH_mean": 1.0,
+    "MAP_mean": 1.0,
+    "HR_mean": 1.0,
+    "Resp_mean": 1.0,
+    "Temp_mean": 1.0,
+    "sf_ratio_min": 1.0
+  },
+  "native_sparse_vs_complete": [
+    {
+      "group": "native_sparse",
+      "n": 2396,
+      "mean_measured": 8.52,
+      "sepsis_rate": 0.1711,
+      "kappa_sepsis": 0.1016,
+      "auc_sepsis": 0.6747
+    },
+    {
+      "group": "native_complete",
+      "n": 3291,
+      "mean_measured": 11.0,
+      "sepsis_rate": 0.141,
+      "kappa_sepsis": 0.0008,
+      "auc_sepsis": 0.5923
+    }
+  ],
+  "mask_vs_values_target": "sepsis onset (full cohort)",
+  "mask_only": {
+    "kappa": 0.0028,
+    "auc": 0.5458
+  },
+  "values_only": {
+    "kappa": 0.0184,
+    "auc": 0.6414
+  },
+  "values_plus_mask": {
+    "kappa": 0.0184,
+    "auc": 0.6414
+  },
+  "mask_share_of_values_auc": 0.851,
+  "note": "Ablation A runs on labelled patients, who are the reference model's complete cases, so it measures loss from REMOVING variables rather than from natural sparsity. B and C run on the full cohort against sepsis onset, because endotype labels exist only where data is complete and therefore cannot support any analysis about missingness."
+}

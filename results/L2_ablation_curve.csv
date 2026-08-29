@@ -1,0 +1,12 @@
+n_features,kappa,auc,removed_so_far,min_availability,features
+12,0.8689,0.9876,0,0.725,"HCO3_mean,Creatinine_mean,WBC_mean,Platelets_mean,BUN_mean,Glucose_mean,pH_mean,MAP_mean,HR_mean,Resp_mean,Temp_mean,sf_ratio_min"
+11,0.798,0.9676,1,0.8504,"Creatinine_mean,WBC_mean,Platelets_mean,BUN_mean,Glucose_mean,pH_mean,MAP_mean,HR_mean,Resp_mean,Temp_mean,sf_ratio_min"
+10,0.7769,0.9603,2,0.8685,"Creatinine_mean,WBC_mean,Platelets_mean,BUN_mean,Glucose_mean,MAP_mean,HR_mean,Resp_mean,Temp_mean,sf_ratio_min"
+9,0.7636,0.956,3,0.8686,"Creatinine_mean,WBC_mean,BUN_mean,Glucose_mean,MAP_mean,HR_mean,Resp_mean,Temp_mean,sf_ratio_min"
+8,0.7488,0.9488,4,0.8799,"Creatinine_mean,BUN_mean,Glucose_mean,MAP_mean,HR_mean,Resp_mean,Temp_mean,sf_ratio_min"
+7,0.6986,0.9267,5,0.8829,"BUN_mean,Glucose_mean,MAP_mean,HR_mean,Resp_mean,Temp_mean,sf_ratio_min"
+6,0.461,0.8031,6,0.9277,"Glucose_mean,MAP_mean,HR_mean,Resp_mean,Temp_mean,sf_ratio_min"
+5,0.3367,0.7465,7,0.9594,"MAP_mean,HR_mean,Resp_mean,Temp_mean,sf_ratio_min"
+4,0.217,0.6786,8,0.9937,"MAP_mean,HR_mean,Resp_mean,sf_ratio_min"
+3,0.2115,0.6795,9,0.9984,"MAP_mean,HR_mean,sf_ratio_min"
+2,0.1304,0.6283,10,0.9998,"HR_mean,sf_ratio_min"

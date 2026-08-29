@@ -145,6 +145,35 @@ strengthens this project's relevance; the critique is a ready-made limitations p
 
 ---
 
+## D16 — The missingness ablation cannot be run on labelled patients (day 2)
+
+**Trigger:** the first version of the C5 ablation reported every feature at 100%
+availability and a mask-only AUC of 0.499, which reads as "missingness carries no signal".
+
+**Diagnosis: the analysis had conditioned the missingness away.** Endotype labels exist
+only for the reference model's complete cases, so within the labelled subset every feature
+is present by construction, the mask is all ones, and a model fitted on it cannot do better
+than chance. The result was an artifact of the subset, not a property of the data.
+
+**Decision:** split the ablation by what each part can support.
+
+- **A (progressive removal)** stays on labelled patients, because it removes whole columns
+  and does not depend on natural sparsity. It measures loss from *taking variables away*.
+- **B (native-sparse vs complete)** and **C (mask-only)** move to the **full cohort** and
+  target **sepsis onset**, which is recorded for all 5,687 patients whether or not a single
+  lab was drawn. That is the only target that can answer a question *about* missingness.
+
+**General lesson worth keeping:** any analysis of missingness run on complete cases is
+answering a different question than it appears to. The label's own construction determines
+which patients can carry it, and here that construction perfectly anti-correlates with the
+thing being studied.
+
+**Also fixed:** the script claimed `GradientBoostingClassifier` handles NaN natively. It
+does not — `HistGradientBoostingClassifier` does. The claim went unnoticed because the
+first version only ever ran on complete cases, where no NaN existed to reject it.
+
+---
+
 ## D15 — The reference model cannot be built in set B at all (day 2)
 
 **Trigger:** the §4.5a mixture needs complete cases on its 12 features. Of 5,687 cohort
