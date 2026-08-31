@@ -77,7 +77,7 @@ introspection for fitted scalers, and a functional probe requiring each patient'
 prediction to be identical alone and inside a batch.
 
 **Generalization (C4).** Frozen set-A models applied to set B, and separately to the eICU
-demo across 186 hospitals under a different schema. **The mortality gradient replicates
+demo across 125 hospitals under a different schema. **The mortality gradient replicates
 decisively**: 16.8% vs 36.6% hospital mortality between predicted classes, Fisher
 p<0.0001, non-overlapping intervals, 2.2×. Benchmarked against APACHE IVa — a published
 model whose predictions ship with the data and which I had no hand in fitting — it reaches
@@ -88,7 +88,7 @@ mortality and an endotype label is not.
 
 *Hospital mortality by predicted class in the eICU demo, 95% intervals. The model was
 trained on Challenge 2019 set A and frozen; eICU is a different dataset with a different
-schema across 186 hospitals.*
+schema across 125 hospitals.*
 
 **Deployment stress-test (C5).** Agreement falls from κ=0.869 on 12 variables to 0.699 at
 7 and 0.461 at 6, losing half its performance by 5 variables. Removal order is
@@ -96,6 +96,12 @@ least-available-first, because a real deployment loses whatever the site does no
 Missingness carries real but modest signal: the mask alone reaches AUC 0.546 against 0.641
 for the values, and adds nothing on top of them — so the stronger conjecture that
 missingness might *beat* the measurements is **not supported**.
+
+The result that cuts against expectation: patients with **fewer** variables measured have a
+*higher* sepsis rate (17.1% vs 14.1%) and are predicted *better* (AUC 0.675 vs 0.592).
+Sparse data is not degraded data here — it marks a different kind of patient. Both analyses
+run on the full cohort against sepsis onset, because endotype labels exist only where data
+is complete and so cannot support any question *about* missingness.
 
 ![Degradation as variables are removed](figures/degradation_curve.png)
 

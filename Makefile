@@ -5,7 +5,7 @@
 PY := python
 export PYTHONPATH := $(CURDIR)
 
-.PHONY: help all check scope test guard clean-figures env
+.PHONY: help all check scope test guard clean-figures env figures paper
 
 help:
 	@echo "make env      - create the conda environment"
@@ -14,6 +14,8 @@ help:
 	@echo "make test     - unit tests + repo guards"
 	@echo "make guard    - integrity guards over every tracked file"
 	@echo "make all      - full pipeline, raw data -> every figure"
+	@echo "make figures  - regenerate every figure at 300 dpi"
+	@echo "make paper    - build paper.pdf from paper.tex (two pdflatex passes)"
 
 env:
 	conda env create -f environment.yml || conda env update -f environment.yml
@@ -40,6 +42,17 @@ all: check scope
 	@echo "Pipeline stages beyond scoping are not built yet."
 	@echo "See SPEC.md §7 for the day-by-day order and the cut lines."
 	@exit 1
+
+figures:
+	$(PY) layer2_clinical/12_figures.py
+	$(PY) layer2_clinical/13_pipeline_diagram.py
+
+# TinyTeX lives outside the default PATH. Two passes resolve refs; no bibtex,
+# because the bibliography is a manual thebibliography environment.
+paper: figures
+	PATH=/home/james/.local/bin:$$PATH pdflatex -interaction=nonstopmode -halt-on-error -file-line-error paper.tex
+	PATH=/home/james/.local/bin:$$PATH pdflatex -interaction=nonstopmode -halt-on-error -file-line-error paper.tex
+	@echo "built paper.pdf"
 
 clean-figures:
 	rm -f figures/*.png results/*.json

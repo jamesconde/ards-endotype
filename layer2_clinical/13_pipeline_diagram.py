@@ -63,5 +63,5 @@ ax.plot([0,100],[16.5,16.5],color="#e5e7eb",lw=1)
 ax.text(99,1,"every model frozen before transfer; holdouts scored once",
         ha="right",fontsize=7.5,color=MUT,style="italic")
 
-fig.savefig(paths.FIGURES/"pipeline_overview.png",dpi=130,bbox_inches="tight",facecolor="white")
+fig.savefig(paths.FIGURES/"pipeline_overview.png",dpi=300,bbox_inches="tight",facecolor="white")
 print("wrote pipeline_overview.png")

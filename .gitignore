@@ -55,3 +55,12 @@ secrets/
 *_token.txt
 *webhook*.txt
 discord_inbox.txt
+
+# LaTeX intermediates (paper.pdf IS committed - it is a deliverable)
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk

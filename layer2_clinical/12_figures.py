@@ -27,7 +27,7 @@ from shared.logging_setup import setup
 log = setup("L2_figures")
 
 plt.rcParams.update({
-    "figure.dpi": 130, "savefig.dpi": 130, "font.size": 9,
+    "figure.dpi": 130, "savefig.dpi": 300, "font.size": 9,
     "axes.spines.top": False, "axes.spines.right": False,
     "axes.titlesize": 10, "axes.titleweight": "bold",
     "figure.facecolor": "white", "savefig.bbox": "tight",
@@ -136,7 +136,7 @@ def fig_mortality() -> None:
     ax.set_xticks(x, [f"hypo-like\n(n={m.n[0]})", f"hyper-like\n(n={m.n[1]})"])
     ax.set_ylabel("Hospital mortality")
     ax.set_ylim(0, max(m.ci_high) * 1.25)
-    ax.set_title("Mortality replicates in eICU (186 hospitals)")
+    ax.set_title("Mortality replicates in eICU (125 hospitals)")
     ax.grid(alpha=.25, ls=":", axis="y")
     for xi, r in zip(x, m.itertuples()):
         ax.annotate(f"{r.mortality:.1%}", (xi, r.ci_high),
