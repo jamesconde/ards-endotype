@@ -22,7 +22,7 @@ those four are not recorded comparably at the second site — bicarbonate is cha
 97.4% of patients at hospital A and **2.1%** at hospital B. Translated into trial terms, to
 enrol the same 3,596 patients you would screen **12,494** with the coverage-matched model
 or **647,654** with the blood-gas model. A 52-fold difference in screening burden, from an
-identical trial design, caused entirely by which variables a hospital happens to chart.
+identical trial design, caused entirely by which variables a hospital routinely measures.
 
 That is not "the model degrades." At hospital B the trial is not runnable.
 
@@ -62,10 +62,11 @@ the result: a coverage gap between hospitals that becomes a 52-fold screening bu
 
 ## Results
 
-**Reproduction (C1).** A Gaussian mixture on set A recovers the published two-class
-structure: the hyperinflammatory-like class reproduces all four published directions —
-lower bicarbonate, higher creatinine, higher WBC, higher event rate — at **28.5%
-prevalence**, inside the 20–35% published cohorts report. BIC actually prefers k=4, which is
+**Reproduction (C1).** A Gaussian mixture on set A recovers the *directional pattern* the
+published literature reports: the hyperinflammatory-like class shows all four expected
+directions — lower bicarbonate, higher creatinine, higher WBC, higher event rate — at **28.5%
+prevalence**, inside the 20–35% published cohorts report. It is not a comparison against the
+published class *assignments*, which do not exist for these patients. BIC actually prefers k=4, which is
 the maximum of the pre-registered range with BIC still falling; that is a boundary solution
 and is reported as one.
 

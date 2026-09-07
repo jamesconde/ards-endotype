@@ -1,4 +1,4 @@
-# Do published ARDS subphenotype classifiers survive routine ICU data?
+# Can published ARDS subphenotype classifiers survive routine ICU data?
 
 **A reproduction and deployment stress-test across six open datasets**
 
@@ -24,9 +24,9 @@ entirely different schema. A modified SOFA score, a variable-ablation curve, a p
 enrichment simulation and one iterative refinement cycle were pre-specified. A molecular
 layer used three transcriptomic cohorts and a 1,472-assay proteomic cohort.
 
-**Results.** The published two-class structure reproduced on all four expected directions at
-28.5% prevalence, and portable classifiers recovered the reference assignment
-($\kappa = 0.852$). Transfer was limited not by the model but by measurement: the frozen
+**Results.** The expected two-class directional pattern was recovered at 28.5% prevalence,
+and portable classifiers reproduced that reference assignment ($\kappa = 0.852$). Transfer
+was limited not by the model but by measurement: the frozen
 classifier scored 82.4% of second-hospital patients using coverage-matched variables and
 1.6% using the variables that performed best, because bicarbonate is charted for 97.4% of
 patients at one site and 2.1% at the other. Expressed as trial screening burden, this is a
@@ -34,9 +34,11 @@ patients at one site and 2.1% at the other. Expressed as trial screening burden,
 $+0.017$ AUC over a severity score; against mortality in eICU the same frozen model
 separated 16.8% from 36.6% hospital mortality ($p < 0.0001$).
 
-**Conclusion.** These classifiers reproduce and transfer, but their deployability is
-governed by hospital charting behaviour rather than by model quality. The apparent weakness
-of the classes on the primary cohort was an artefact of the available endpoint.
+**Conclusion.** Reproducibility, portability and deployability are distinct properties. A
+classifier can recover a published structure, run without cohort-derived preprocessing, and
+still be unusable at another hospital because the measurements it requires are not routinely
+obtained. The apparent weakness of the classes on the primary cohort depended strongly on
+the available endpoint.
 
 ---
 
@@ -56,6 +58,14 @@ protocol. Routine intensive care is not like that. Laboratory measurement is int
 ordering behaviour differs between institutions, and missingness in electronic health
 records is well established as informative rather than random, reflecting care process
 rather than patient biology alone.
+
+**Three properties are conflated in most of this literature, and this study separates
+them.** *Reproducibility* is whether a published structure can be recovered in a new dataset.
+*Portability* is whether a model can run without cohort-derived preprocessing — no z-scores
+against a population, no median imputation. *Deployability* is whether the measurements the
+model requires are actually obtained at the site where it would run. A classifier can satisfy
+the first two completely and fail the third, and the third is where this study's contribution
+lies.
 
 This gives a concrete operational question, and it is the question a clinical-development
 team faces when designing an enrichment strategy:
@@ -117,7 +127,24 @@ bin. Without it the mask conflates *not ordered* with *already discharged*. The 
 is large rather than pedantic: overall observation density is 27.2% raw but 52.5% within
 the record, so nearly half of apparent missingness is censoring.
 
-### 2.4 Reference assignment
+### 2.4 Reference assignment, and what "reproduction" means here
+
+Four distinct objects are involved, and conflating them would overstate the result:
+
+1. the **published** subphenotype structure, derived by latent class analysis on trial
+   cohorts and known from the literature [1–3];
+2. a **reference assignment** fitted here, on this cohort, by Gaussian mixture;
+3. a **portable approximation** of that reference assignment;
+4. **external prognostic validation** of the portable model in an independent database.
+
+This study demonstrates that (2) recovers the *directional pattern* of (1), that (3)
+reproduces (2) at high agreement, and that (4) holds. It does **not** demonstrate that (2) is
+the same partition as the published latent classes: published class assignments for these
+patients do not exist, so no direct agreement can be computed. Where the text says
+"recovered", it means the directional pattern; where it says "reproduced", it means agreement
+with the reference assignment fitted here.
+
+
 
 A Gaussian mixture on log-transformed, **cohort-standardised** static features, fitted on
 hospital system A. It requires the cohort mean and standard deviation of every variable at
@@ -195,7 +222,15 @@ missingness, age and predicted class into a taxonomy; refinements were selected 
 written down before any diagnosis ran**; round 2 was evaluated on the holdout, scored
 exactly once.
 
-### 2.11 Molecular layer
+### 2.11 Molecular layer (secondary)
+
+**This layer is biological triangulation, not validation of the clinical classifier.** The
+two cannot validate one another: the cohorts share no patients, the modalities differ, and
+no patient-level link exists. It is included because it tests whether an inflammatory
+two-class structure is recoverable in molecular data at all, and because the longitudinal
+proteomics answer a question the clinical layer cannot — whether class membership is stable
+over time. Readers interested only in the deployment argument can skip §3.10 without loss.
+
 
 A regularised multinomial model was trained on GSE65682 to predict published MARS endotype
 labels, with the resulting signature frozen. Consensus clustering with PAC-based $k$
@@ -226,11 +261,14 @@ are older, stay longer and have roughly triple the sepsis rate, with standardise
 differences of 0.19 to 0.34. System B's cohort has a higher baseline sepsis rate than
 system A's (22.2% versus 13.9%).
 
-### 3.2 The published structure reproduces
+### 3.2 The expected directional pattern is recovered
 
-At $k=2$, the class with the lowest bicarbonate reproduced **all four expected published
-directions** — lower bicarbonate, higher creatinine, higher white cell count, higher event
-rate — at a prevalence of 28.5%, inside the 20–35% range published cohorts report.
+At $k=2$, the class with the lowest bicarbonate showed **all four directions the published
+literature reports** for the hyperinflammatory class — lower bicarbonate, higher creatinine,
+higher white cell count, higher event rate — at a prevalence of 28.5%, inside the 20–35%
+range published cohorts report. These four were specified in advance as the directional
+signature to check; agreement with the published *assignment* is not computable, since
+published labels for these patients do not exist.
 
 BIC preferred $k=4$. That value is the maximum of the pre-registered range with BIC still
 falling, making it a **boundary solution**: the range, not the criterion, chose $k$. The
@@ -262,11 +300,15 @@ restricted set's coverage is matched across sites by construction. Bicarbonate i
 for 97.4% of system A patients and 2.1% of system B; chloride 97.3% versus 8.1%; base excess
 62.2% versus 2.8%. The difference runs in both directions — system B charts diastolic
 pressure (99.9% versus 63.7%) and troponin (32.8% versus 2.4%) *more* — which identifies it
-as charting behaviour rather than a data-quality defect at one site.
+as institutional measurement practice rather than a data-quality defect at one site.
 
 **System B contains zero patients with reference labels.** Only 16 of its 1,007 cohort
 patients have the variables the reference model requires, so no site-native reference
-assignment exists to compare against.
+assignment exists to compare against. The consequence should be stated plainly, because it
+bounds every transfer claim in this paper: **external transfer could be evaluated
+operationally and prognostically, but not by direct label agreement.** Scoreability,
+predicted prevalence and outcome association are measurable; external $\kappa$, sensitivity,
+specificity and calibration against a gold assignment are not.
 
 Predicted prevalence rose from 27.9% at A to 35.2% at B. The predicted class continued to
 stratify sepsis onset in the same direction (22.9% versus 18.0%), but **not significantly**
@@ -289,7 +331,7 @@ when combined with them (0.641 either way). Missingness therefore carries real b
 signal, and the stronger conjecture that it might *beat* the measurements is **not
 supported**.
 
-### 3.6 Severity explains most of what the classes explain
+### 3.6 The endotype adds little beyond the available severity score
 
 | Predictor | AUC for sepsis onset |
 |---|---|
@@ -297,8 +339,11 @@ supported**.
 | Modified SOFA alone | 0.540 |
 | Both | 0.556 |
 
-Endotype adds $+0.017$ AUC over severity, below the 0.02 threshold set before the result was
-seen. Two qualifications prevent this being over-read. First, **all three values are near
+The endotype provided **little incremental discrimination beyond the available severity
+score**: $+0.017$ AUC, below the 0.02 threshold set before the result was seen. That phrasing
+is deliberate — the stronger claim that severity *explains* the classes is not supported,
+because the comparator is impaired (below) and because both predictors are weak. Two
+qualifications prevent this being over-read. First, **all three values are near
 chance**: severity does not predict sepsis onset either, so this compares two weak
 predictors. Second, the severity score is deliberately weakened (§2.7), which biases the
 comparison toward the endotype and makes the null *stronger* than it appears.
@@ -307,7 +352,7 @@ Classes partially survive severity adjustment: ARI 0.332 between the original as
 one refitted with features standardised within severity quartile. The confound is real but
 not total.
 
-### 3.7 Mortality replicates in an independent database
+### 3.7 Prognostic stratification replicates in an independent database
 
 Applying the frozen system-A model to the eICU demonstration database — a different schema,
 125 hospitals — required mapping laboratory names and one unit conversion, since eICU charts
@@ -319,7 +364,11 @@ were present and passed range verification.
 | Hypoinflammatory-like | 244 | 41 | 16.8% | 12.3–22.1% |
 | Hyperinflammatory-like | 142 | 52 | 36.6% | 28.7–45.1% |
 
-Fisher $p < 0.0001$, non-overlapping intervals, a 2.2-fold ratio.
+Fisher $p < 0.0001$, non-overlapping intervals, a 2.2-fold ratio. What replicates is the
+**mortality gradient**, not the underlying biological endotype: a classifier developed to
+approximate an inflammatory phenotype retains prognostic stratification when transported to
+an independent database, which is a weaker and more defensible claim than biological
+replication.
 
 Benchmarked against APACHE IVa — a published, externally validated model whose predictions
 ship with the data and which was not fitted here — the endotype probability reached AUC
@@ -330,9 +379,12 @@ prediction and an endotype label is not.
 
 Unstratified enrollment requires 2,196 patients per arm; perfect enrichment on the
 high-event class requires 1,573, a 28.4% reduction; at realistic classifier accuracy, 1,798.
+**The trial size quoted below is 3,596 = 2 $\times$ 1,798**, both arms at that accuracy.
 
-Screening burden is where this becomes consequential. To enrol the same 3,596 patients at
-the second hospital:
+Screening burden is where this becomes consequential. Patients must both test positive and
+be scoreable at all, so the number screened is
+$2n \,/\, (f_{\text{pos}} \cdot f_{\text{scoreable}})$, where $f_{\text{pos}} = 0.349$ is
+the fraction testing positive. To enrol the same 3,596 patients at the second hospital:
 
 | Model | Patients to screen |
 |---|---|
@@ -340,7 +392,14 @@ the second hospital:
 | Blood-gas dependent | 647,654 |
 
 A 52-fold difference from an identical trial design, determined by which variables the
-hospital charts.
+hospital measures.
+
+**This ratio is more robust than it may appear.** Because trial size, accuracy, prevalence
+and $f_{\text{pos}}$ are identical in both rows, they cancel exactly, and the ratio reduces
+to the scoreability ratio alone: $0.824 / 0.0159 = 51.8$. It therefore does not depend on
+the assumed 20% relative risk reduction, the 80% power, or the assumed classifier accuracy —
+none of which enter the comparison. What it does depend on is the observed coverage
+difference between the two hospitals.
 
 ### 3.9 Refinement
 
@@ -355,7 +414,8 @@ count as an explicit feature. On the holdout, scored once, enrichment improved (
 refinements act on the operating point and AUC is threshold-invariant. **The deployable
 quantity improved; the model did not.**
 
-### 3.10 Molecular layer
+### 3.10 Molecular layer (secondary triangulation)
+
 
 The MARS endotype labels were present in GSE65682 metadata for 479 samples. A regularised
 multinomial model predicted them at 87.5% out-of-fold accuracy with per-class AUC 0.975 to
@@ -388,6 +448,18 @@ host-response structure with an aetiology component.
 
 ## 4. Discussion
 
+### 4.1 What each claim does and does not establish
+
+| Claim | Evidence | What it does **not** establish |
+|---|---|---|
+| A two-class directional pattern is recoverable | GMM; all four published directions at 28.5% prevalence | That this partition equals the published latent classes |
+| A portable classifier reproduces the reference assignment | $\kappa = 0.852$, both portability checks passed | External classification accuracy at another site |
+| The model transfers operationally | 82.4% scoreable at system B | External label agreement, calibration, or sensitivity/specificity |
+| Measurement practice limits deployment | 82.4% vs 1.6% scoreable; bicarbonate 97.4% vs 2.1% | Why each institution orders what it orders |
+| The classes retain prognostic signal | eICU 16.8% vs 36.6% mortality, $p<0.0001$ | Biological endotype replication, or treatment-effect heterogeneity |
+| Refinement improved enrichment | RR 1.62 $\rightarrow$ 2.02 on a once-scored holdout | Improved discrimination (AUC was flat) |
+
+
 **The endpoint, not the classes, was the limiting factor.** On the primary cohort the
 subphenotypes looked close to worthless: AUC 0.544 for sepsis onset, adding $+0.017$ over a
 severity score. On eICU the same frozen model separated mortality by a factor of 2.2 with
@@ -396,7 +468,11 @@ never derived against; mortality is what they were built on. Reporting either re
 the other would mislead, and the pairing is the single most important interpretive point in
 this study.
 
-**Deployability is governed by charting behaviour.** The classifier is not the bottleneck.
+**Deployability is governed by institutional measurement practice.** Not by documentation
+quality: a variable absent from a record may never have been *ordered*, which is a different
+and larger claim. The bidirectional difference supports the broader reading — system B
+records diastolic pressure and troponin more often, not less — so what differs is which tests
+each institution routinely obtains. The classifier is not the bottleneck.
 A model reproducing its reference assignment at $\kappa = 0.852$ becomes unusable at a
 hospital that does not order the tests it needs, and the parsimony curve makes this worse
 rather than better: the most informative small variable set is disproportionately built from
@@ -432,7 +508,12 @@ as an observation requiring explanation rather than as an explained finding.
   cohort's clinical file contains no bicarbonate. The model is implemented correctly and
   shown to be inapplicable, which is itself the finding.
 - **$k$ selection hit the pre-registered range boundary in both layers**, so the range rather
-  than the criterion determined the number of classes in each case.
+  than the criterion determined the number of classes in each case. This should not be read
+  as establishing a four-class clinical solution or a six-class molecular one: BIC and PAC
+  were both still improving at the edge of the searched range, so the true preferred $k$ is
+  unknown and may be larger. All substantive results here use the two-class comparison,
+  which was chosen for comparability with the published dichotomy rather than by the
+  selection criterion.
 - **PAC never fell below 0.42** in the transcriptomic layer: no $k$ gives a stable partition,
   and the ARI against published labels is doing the work that stability cannot.
 - The cohort is selected by its own inclusion criteria, and the reference-model subset is
