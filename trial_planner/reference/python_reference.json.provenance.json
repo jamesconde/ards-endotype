@@ -1,0 +1,19 @@
+{
+  "project": "ards-trial-planner",
+  "artifact_purpose": "Unrounded values from the real 09_enrichment_simulation.main(), for the R port's parity test",
+  "created_utc": "2026-10-31T23:37:42Z",
+  "git_commit": "uncommitted+dirty",
+  "git_branch": "?",
+  "script": "export_reference.py",
+  "host": "Marcus",
+  "evidence_tier": "CHECKED",
+  "basis": "float64 values captured inside main(); endpoint sepsis onset; curve uses sens = spec = accuracy",
+  "inputs": {
+    "09_enrichment_simulation.py": "790a49146754071d",
+    "ards.duckdb": "21845fa631b48466",
+    "scratch/features/static.parquet": "053cec514465c3ee",
+    "results/L2_transfer_results.csv": "72cb07e10fd0a3fe"
+  },
+  "source_repo": "/home/james/ards-endotypes",
+  "source_commit": "d5f5f66"
+}

@@ -40,6 +40,11 @@ systems. The difference runs in both directions — hospital B charts diastolic 
 troponin more — which is why this is measurement practice rather than a data-quality defect
 at one site.*
 
+**Try the trade-off yourself:** the [enrichment trial planner](https://jamesconde.shinyapps.io/enrichment-trial-planner/)
+(R Shiny, source in [`trial_planner/`](trial_planner/)) recomputes required N and screening burden for any classifier
+accuracy and site coverage. It is parity-tested against `09_enrichment_simulation.py` and checked by patient-level
+simulation.
+
 ## Pipeline
 
 ![Pipeline overview](figures/pipeline_overview.png)

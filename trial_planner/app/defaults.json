@@ -1,0 +1,46 @@
+{
+  "_provenance": {
+    "project": "ards-trial-planner",
+    "artifact_purpose": "Cohort inputs for the trial planner, from the real 09_enrichment_simulation.main()",
+    "created_utc": "2026-10-31T23:37:42Z",
+    "git_commit": "uncommitted+dirty",
+    "git_branch": "?",
+    "script": "export_reference.py",
+    "host": "Marcus",
+    "evidence_tier": "CHECKED",
+    "basis": "unrounded float64; hypoxemic respiratory failure cohort (oximetry surrogate)",
+    "inputs": {
+      "09_enrichment_simulation.py": "790a49146754071d",
+      "ards.duckdb": "21845fa631b48466",
+      "scratch/features/static.parquet": "053cec514465c3ee",
+      "results/L2_transfer_results.csv": "72cb07e10fd0a3fe"
+    },
+    "source_repo": "/home/james/ards-endotypes",
+    "source_commit": "d5f5f66"
+  },
+  "constants": {
+    "alpha": 0.05,
+    "power": 0.8,
+    "rrr": 0.2,
+    "acc_assumed": 0.85
+  },
+  "observed": {
+    "prevalence": 0.28458015267175574,
+    "p_hyper": 0.18669527896995708,
+    "p_hypo": 0.12206572769953052,
+    "p_all": 0.14045801526717558
+  },
+  "scoreable": {
+    "restricted_setB": 0.8242,
+    "naive_setB": 0.0159,
+    "restricted_setA": 0.7983,
+    "naive_setA": 0.6998
+  },
+  "labels": {
+    "restricted_setA": "System A, coverage-matched model",
+    "naive_setA": "System A, blood-gas model",
+    "restricted_setB": "System B, coverage-matched model",
+    "naive_setB": "System B, blood-gas model"
+  },
+  "endpoint": "sepsis onset (NOT mortality, NOT ARDS-adjudicated)"
+}

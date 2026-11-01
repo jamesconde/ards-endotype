@@ -1,0 +1,423 @@
+{
+  "_provenance": {
+    "project": "ards-trial-planner",
+    "artifact_purpose": "Unrounded values from the real 09_enrichment_simulation.main(), for the R port's parity test",
+    "created_utc": "2026-10-31T23:37:42Z",
+    "git_commit": "uncommitted+dirty",
+    "git_branch": "?",
+    "script": "export_reference.py",
+    "host": "Marcus",
+    "evidence_tier": "CHECKED",
+    "basis": "float64 values captured inside main(); endpoint sepsis onset; curve uses sens = spec = accuracy",
+    "inputs": {
+      "09_enrichment_simulation.py": "790a49146754071d",
+      "ards.duckdb": "21845fa631b48466",
+      "scratch/features/static.parquet": "053cec514465c3ee",
+      "results/L2_transfer_results.csv": "72cb07e10fd0a3fe"
+    },
+    "source_repo": "/home/james/ards-endotypes",
+    "source_commit": "d5f5f66"
+  },
+  "constants": {
+    "alpha": 0.05,
+    "power": 0.8,
+    "rrr": 0.2,
+    "acc_assumed": 0.85
+  },
+  "observed": {
+    "prevalence": 0.28458015267175574,
+    "p_hyper": 0.18669527896995708,
+    "p_hypo": 0.12206572769953052,
+    "p_all": 0.14045801526717558
+  },
+  "scoreable": {
+    "restricted_setB": 0.8242,
+    "naive_setB": 0.0159,
+    "restricted_setA": 0.7983,
+    "naive_setA": 0.6998
+  },
+  "n_unstrat": 2195.5685671131946,
+  "n_perfect": 1572.7915862071573,
+  "break_even_accuracy": 0.5,
+  "site": {
+    "ppv": 0.6926944432300092,
+    "p_enrolled": 0.16683425873300398,
+    "n_per_arm": 1798.0096884708212,
+    "frac_positive": 0.349206106870229
+  },
+  "calls": {
+    "n_per_arm": [
+      {
+        "args": {
+          "p_control": 0.14045801526717558,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 2195.5685671131946
+      },
+      {
+        "args": {
+          "p_control": 0.18669527896995708,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 1572.7915862071573
+      },
+      {
+        "args": {
+          "p_control": 0.18669527896995708,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 1572.7915862071573
+      },
+      {
+        "args": {
+          "p_control": 0.17914318487855968,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 1652.5458827843552
+      },
+      {
+        "args": {
+          "p_control": 0.17258410213400427,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 1727.477023264957
+      },
+      {
+        "args": {
+          "p_control": 0.16683425873300398,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 1798.0096884708212
+      },
+      {
+        "args": {
+          "p_control": 0.16175259430077418,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 1864.5201230210553
+      },
+      {
+        "args": {
+          "p_control": 0.15722903288577544,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 1927.342849290249
+      },
+      {
+        "args": {
+          "p_control": 0.15317641850512803,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 1986.776294704972
+      },
+      {
+        "args": {
+          "p_control": 0.14952484482940004,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 2043.087532180935
+      },
+      {
+        "args": {
+          "p_control": 0.1462175888799786,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 2096.5162925917452
+      },
+      {
+        "args": {
+          "p_control": 0.14320814320814323,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 2147.2783764377778
+      },
+      {
+        "args": {
+          "p_control": 0.14045801526717558,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 2195.5685671131946
+      },
+      {
+        "args": {
+          "p_control": 0.16683425873300398,
+          "rrr": 0.2,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "out": 1798.0096884708212
+      }
+    ],
+    "ppv_from_accuracy": [
+      {
+        "args": {
+          "sens": 1.0,
+          "spec": 1.0,
+          "prevalence": 0.28458015267175574
+        },
+        "out": 1.0
+      },
+      {
+        "args": {
+          "sens": 0.95,
+          "spec": 0.95,
+          "prevalence": 0.28458015267175574
+        },
+        "out": 0.8831479726696922
+      },
+      {
+        "args": {
+          "sens": 0.9,
+          "spec": 0.9,
+          "prevalence": 0.28458015267175574
+        },
+        "out": 0.7816606094492592
+      },
+      {
+        "args": {
+          "sens": 0.85,
+          "spec": 0.85,
+          "prevalence": 0.28458015267175574
+        },
+        "out": 0.6926944432300092
+      },
+      {
+        "args": {
+          "sens": 0.8,
+          "spec": 0.8,
+          "prevalence": 0.28458015267175574
+        },
+        "out": 0.6140668753088454
+      },
+      {
+        "args": {
+          "sens": 0.75,
+          "spec": 0.75,
+          "prevalence": 0.28458015267175574
+        },
+        "out": 0.5440747227086982
+      },
+      {
+        "args": {
+          "sens": 0.7,
+          "spec": 0.7,
+          "prevalence": 0.28458015267175574
+        },
+        "out": 0.4813694385007009
+      },
+      {
+        "args": {
+          "sens": 0.65,
+          "spec": 0.65,
+          "prevalence": 0.28458015267175574
+        },
+        "out": 0.4248693761615879
+      },
+      {
+        "args": {
+          "sens": 0.6,
+          "spec": 0.6,
+          "prevalence": 0.28458015267175574
+        },
+        "out": 0.37369687249398553
+      },
+      {
+        "args": {
+          "sens": 0.55,
+          "spec": 0.55,
+          "prevalence": 0.28458015267175574
+        },
+        "out": 0.3271323271323272
+      },
+      {
+        "args": {
+          "sens": 0.5,
+          "spec": 0.5,
+          "prevalence": 0.28458015267175574
+        },
+        "out": 0.28458015267175574
+      },
+      {
+        "args": {
+          "sens": 0.85,
+          "spec": 0.85,
+          "prevalence": 0.28458015267175574
+        },
+        "out": 0.6926944432300092
+      }
+    ]
+  },
+  "curve_rows": [
+    {
+      "classifier_accuracy": 1.0,
+      "ppv": 1.0,
+      "event_rate_enrolled": 0.1867,
+      "n_per_arm": 1573,
+      "n_total": 3146,
+      "screen_per_enrolled": 3.51,
+      "screened_total": 11053,
+      "vs_unstratified": 0.716
+    },
+    {
+      "classifier_accuracy": 0.95,
+      "ppv": 0.8831,
+      "event_rate_enrolled": 0.1791,
+      "n_per_arm": 1653,
+      "n_total": 3305,
+      "screen_per_enrolled": 3.27,
+      "screened_total": 10797,
+      "vs_unstratified": 0.753
+    },
+    {
+      "classifier_accuracy": 0.9,
+      "ppv": 0.7817,
+      "event_rate_enrolled": 0.1726,
+      "n_per_arm": 1727,
+      "n_total": 3455,
+      "screen_per_enrolled": 3.05,
+      "screened_total": 10544,
+      "vs_unstratified": 0.787
+    },
+    {
+      "classifier_accuracy": 0.85,
+      "ppv": 0.6927,
+      "event_rate_enrolled": 0.1668,
+      "n_per_arm": 1798,
+      "n_total": 3596,
+      "screen_per_enrolled": 2.86,
+      "screened_total": 10298,
+      "vs_unstratified": 0.819
+    },
+    {
+      "classifier_accuracy": 0.8,
+      "ppv": 0.6141,
+      "event_rate_enrolled": 0.1618,
+      "n_per_arm": 1865,
+      "n_total": 3729,
+      "screen_per_enrolled": 2.7,
+      "screened_total": 10058,
+      "vs_unstratified": 0.849
+    },
+    {
+      "classifier_accuracy": 0.75,
+      "ppv": 0.5441,
+      "event_rate_enrolled": 0.1572,
+      "n_per_arm": 1927,
+      "n_total": 3855,
+      "screen_per_enrolled": 2.55,
+      "screened_total": 9826,
+      "vs_unstratified": 0.878
+    },
+    {
+      "classifier_accuracy": 0.7,
+      "ppv": 0.4814,
+      "event_rate_enrolled": 0.1532,
+      "n_per_arm": 1987,
+      "n_total": 3974,
+      "screen_per_enrolled": 2.42,
+      "screened_total": 9602,
+      "vs_unstratified": 0.905
+    },
+    {
+      "classifier_accuracy": 0.65,
+      "ppv": 0.4249,
+      "event_rate_enrolled": 0.1495,
+      "n_per_arm": 2043,
+      "n_total": 4086,
+      "screen_per_enrolled": 2.3,
+      "screened_total": 9385,
+      "vs_unstratified": 0.931
+    },
+    {
+      "classifier_accuracy": 0.6,
+      "ppv": 0.3737,
+      "event_rate_enrolled": 0.1462,
+      "n_per_arm": 2097,
+      "n_total": 4193,
+      "screen_per_enrolled": 2.19,
+      "screened_total": 9177,
+      "vs_unstratified": 0.955
+    },
+    {
+      "classifier_accuracy": 0.55,
+      "ppv": 0.3271,
+      "event_rate_enrolled": 0.1432,
+      "n_per_arm": 2147,
+      "n_total": 4295,
+      "screen_per_enrolled": 2.09,
+      "screened_total": 8976,
+      "vs_unstratified": 0.978
+    },
+    {
+      "classifier_accuracy": 0.5,
+      "ppv": 0.2846,
+      "event_rate_enrolled": 0.1405,
+      "n_per_arm": 2196,
+      "n_total": 4391,
+      "screen_per_enrolled": 2.0,
+      "screened_total": 8782,
+      "vs_unstratified": 1.0
+    }
+  ],
+  "site_rows": [
+    {
+      "scenario": "restricted_setB",
+      "frac_scoreable": 0.8242,
+      "n_total_enrolled": 3596,
+      "patients_to_screen": 12494,
+      "screen_multiplier_vs_full_coverage": 1.21
+    },
+    {
+      "scenario": "naive_setB",
+      "frac_scoreable": 0.0159,
+      "n_total_enrolled": 3596,
+      "patients_to_screen": 647654,
+      "screen_multiplier_vs_full_coverage": 62.89
+    },
+    {
+      "scenario": "restricted_setA",
+      "frac_scoreable": 0.7983,
+      "n_total_enrolled": 3596,
+      "patients_to_screen": 12900,
+      "screen_multiplier_vs_full_coverage": 1.25
+    },
+    {
+      "scenario": "naive_setA",
+      "frac_scoreable": 0.6998,
+      "n_total_enrolled": 3596,
+      "patients_to_screen": 14715,
+      "screen_multiplier_vs_full_coverage": 1.43
+    }
+  ],
+  "reproduces_committed_outputs": {
+    "L2_enrichment_curve.csv": true,
+    "L2_enrichment_by_site.csv": true,
+    "L2_enrichment_summary.json": true
+  }
+}
