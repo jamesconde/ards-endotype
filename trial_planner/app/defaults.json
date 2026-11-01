@@ -2,9 +2,9 @@
   "_provenance": {
     "project": "ards-trial-planner",
     "artifact_purpose": "Cohort inputs for the trial planner, from the real 09_enrichment_simulation.main()",
-    "created_utc": "2026-10-31T23:37:42Z",
-    "git_commit": "uncommitted+dirty",
-    "git_branch": "?",
+    "created_utc": "2026-11-01T01:42:32Z",
+    "git_commit": "fbf28fb",
+    "git_branch": "main",
     "script": "export_reference.py",
     "host": "Marcus",
     "evidence_tier": "CHECKED",
@@ -16,7 +16,7 @@
       "results/L2_transfer_results.csv": "72cb07e10fd0a3fe"
     },
     "source_repo": "/home/james/ards-endotypes",
-    "source_commit": "d5f5f66"
+    "source_commit": "fbf28fb"
   },
   "constants": {
     "alpha": 0.05,
